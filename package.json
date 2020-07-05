@@ -1,0 +1,16 @@
+{
+  "name": "C2C",
+  "version": "1.0.0",
+  "main": "main.js",
+  "devDependencies": {
+    "electron": "^8.1.1"
+  },
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "chart.js": "^2.9.3",
+    "nedb": "^1.8.0",
+    "ws": "^7.3.0"
+  }
+}

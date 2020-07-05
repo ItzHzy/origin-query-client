@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>CARDNAME</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.grey-cyan.min.css" />
+    <link rel="stylesheet" href="assets/css/fstyles.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/tabs.css">
+    <link rel="stylesheet" href="assets/css/builder-page.css">
+    <link rel="stylesheet" href="assets/css/stats-page.css">
+    <link rel="stylesheet" href="assets/css/game-page.css">
+    <link rel="stylesheet" href="assets/css/server-page.css">
+    <link rel="stylesheet" href="assets/css/info-page.css">
+    <link rel="stylesheet" href="assets/css/settings-page.css">
+</head>
+
+<body background="assets/icons/background.png">
+    <div id="mainContainer">
+
+        <div class="tabs" id="tabs">
+
+            <div class="tab clickable" id="menuIcon">
+                <img src="assets/icons/arrow.svg" alt="" class="tabImage">
+            </div>
+
+            <hr color="#737070" width="80%">
+
+            <div class="tab clickable" id="builderIcon">
+                <img src="assets/icons/builder.svg" alt="" class="tabImage">
+            </div>
+
+            <div class="tab clickable" id="statsIcon">
+                <img src="assets/icons/stats.svg" alt="" class="tabImage">
+            </div>
+
+            <div class="tab clickable" id="gameIcon">
+                <img src="assets/icons/game.svg" alt="" class="tabImage">
+            </div>
+
+            <div class="tab clickable" id="serverIcon">
+                <img src="assets/icons/server.svg" alt="Login" class="tabImage">
+            </div>
+
+            <div class="tab clickable" id="settingsIcon">
+                <img src="assets/icons/settings.svg" alt="" class="tabImage">
+            </div>
+
+            <div class="tab clickable" id="infoIcon">
+                <img src="assets/icons/info.svg" alt="" class="tabImage">
+            </div>
+
+        </div>
+
+        <div id="activityCntr">
+
+            <div class="promptable" id="createGamePrompt">
+                <p class="prompt-hdr">Create Game</p>
+                <form name="createGame" style="display:flex; width: 100%; margin-left: auto;margin-right: auto;">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 90%; margin-left: auto;margin-right: auto;">
+                        <input class="mdl-textfield__input" type="text" id="title">
+                        <label class="mdl-textfield__label" for="title">Title</label>
+                    </div>
+                </form>
+                <form id="numPlayersChosen" style="display: flex;flex-direction: row;justify-content: space-evenly;margin-top: 30px;">
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-1">
+                        <input type="radio" id="numPlayersChosen-1" class="mdl-radio__button" name="num" value="1">
+                        <span class="mdl-radio__label">1 Player</span>
+                    </label>
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-2">
+                        <input type="radio" id="numPlayersChosen-2" class="mdl-radio__button" name="num" value="2">
+                        <span class="mdl-radio__label">2 Player</span>
+                    </label>
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-3">
+                        <input type="radio" id="numPlayersChosen-3" class="mdl-radio__button" name="num" value="3">
+                        <span class="mdl-radio__label">3 Player</span>
+                    </label>
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-4">
+                        <input type="radio" id="numPlayersChosen-4" class="mdl-radio__button" name="num" value="4">
+                        <span class="mdl-radio__label">4 Player</span>
+                    </label>
+                </form>
+                <div style="display: flex;flex-direction: row; margin-bottom: 35px;margin-top: auto;justify-content: flex-end;">
+                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="cancelCreationButton">
+                        <i class="material-icons">clear</i>
+                    </button>
+                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="createGameButton">
+                        <i class="material-icons">done</i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="builder-page">
+
+                <div class="header" id="builder-hdr deckName">
+                    <p style="font-weight: bold;height: 100%;font-size: xx-large;margin-top: 13px;">&nbsp;Untitled</p>
+                </div>
+
+                <div id="builderContent">
+
+                    <div id="c1">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="searchBarCtnr" style="border-color: black;">
+                            <input class="mdl-textfield__input" type="text" id="searchBar">
+                            <label class="mdl-textfield__label" for="searchBar">Search</label>
+                        </div>
+                        <div id="searchResults"></div>
+                    </div>
+
+                    <div id="c2">
+                        <div id="deckList"></div>
+                        <div id="deckOptions">
+                            <button class="deckOptionButton clickable" id="plus-1">
+                                <i class="material-icons">add_circle_outline</i>
+                            </button>
+                            <button class="deckOptionButton clickable" id="minus-1">
+                                <i class="material-icons">remove_circle_outline</i>
+                            </button>
+                            <button class="deckOptionButton clickable" id="saveDeck">
+                                <img src="assets/icons/save.svg" alt="" style="height: 40px;width: 30px;">
+                            </button>
+                            <button class="deckOptionButton clickable" id="loadDeck">
+                                <img src="assets/icons/load.svg" alt="" style="height: 40px;width: 30px;">
+                            </button>
+                            <button class="deckOptionButton clickable" id="exportDeck">
+                                <img src="assets/icons/export.svg" alt="" style="height: 40px;width: 30px;filter: invert(0%) sepia(0%) saturate(7500%) hue-rotate(329deg) brightness(99%) contrast(105%);">
+                            </button>
+                            <button class="deckOptionButton clickable" id="clearDeck">
+                                <img src="assets/icons/clear.svg" alt="" style="height: 40px;width: 30px;filter: invert(0%) sepia(0%) saturate(7487%) hue-rotate(311deg) brightness(93%) contrast(102%);">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="c3"></div>
+
+                </div>
+
+            </div>
+
+            <div id="stats-page">
+                <canvas id="cmcChart" width="200px" height="150px"></canvas>
+            </div>
+
+            <div id="game-page">
+                <div id="failed-game-MSG">
+                    <p>Not Connected to a Game</p>
+                </div>
+                <div id="lobby">
+                    <div id="lobby__header">
+                        <button id="lobby__ready-btn">Ready</button>
+                        <button id="lobby__not-ready-btn">Not Ready</button>
+                        <button id="lobby__choose-deck-btn">Choose Deck</button>
+                    </div>
+                    <div id="lobby__div">
+                        <div id="lobby__deck-list"></div>
+                        <div id="lobby__enhanced-card-img"></div>
+                        <div id="lobby__player-list"></div>
+                    </div>
+                </div>
+                <div id="game-board"></div>
+            </div>
+
+            <div id="server-page">
+
+                <div class="promptable prompt" id="login-prompt">
+                    <p class="prompt-hdr">Login</p>
+                    <form id="username" style="display:flex; width: 100%; margin-left: auto;margin-right: auto;">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 90%; margin-left: auto;margin-right: auto;">
+                            <input style="background-color: transparent;" class="mdl-textfield__input" type="text" id="username-entry">
+                            <label class="mdl-textfield__label" for="username-entry">Username</label>
+                        </div>
+                    </form>
+                    <form id="password" style="display:flex; width: 100%; margin-left: auto;margin-right: auto;">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 90%; margin-left: auto;margin-right: auto;">
+                            <input class="mdl-textfield__input" type="password" id="password-entry">
+                            <label class="mdl-textfield__label" for="password-entry">Password</label>
+                        </div>
+                    </form>
+                    <form id="server" style="display:flex; width: 100%; margin-left: auto;margin-right: auto;">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 90%; margin-left: auto;margin-right: auto;">
+                            <input class="mdl-textfield__input" type="text" id="server-entry">
+                            <label class="mdl-textfield__label" for="server-entry">Server Address</label>
+                        </div>
+                    </form>
+                    <div style="display: flex;flex-direction: row; margin-bottom: 35px;margin-top: auto;justify-content: flex-end;">
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="login-btn">
+                            <i class="material-icons">done</i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <div id="serverMenu">
+                    <div id="serverHeader">
+                        <button class="mdl-button mdl-js-button mdl-button--raised vertical-align clickable" id="createGamePromptButton" style="margin-left: auto;">
+                            <i class="material-icons">add</i>
+                        </button>
+                    </div>
+                    <div id="gameListings"></div>
+                </div>
+            </div>
+
+            <div id="settings-page">
+
+                <p id="settings-hdr"><b>Settings</b></p>
+
+
+            </div>
+
+            <div id="info-page">
+                <p id="software-info">Cardname is a tool to help facilitate deck tuning for MTG.
+                    <br><br> Cardname is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
+            </div>
+
+        </div>
+
+    </div>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script type="module" src="assets/js/config.js"></script>
+    <script type="module" src="node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script type="module" src="node_modules/nedb/browser-version/out/nedb.min.js"></script>
+    <script type="module" src="assets/js/tabs.js"></script>
+    <script type="module" src="assets/js/builderActivity.js"></script>
+    <script type="module" src="assets/js/statsActivity.js"></script>
+    <script type="module" src="assets/js/gameActivity.js"></script>
+    <script type="module" src="assets/js/serverActivity.js"></script>
+</body>
+
+</html>

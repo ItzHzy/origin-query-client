@@ -1,0 +1,69 @@
+#server-page {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+#login-prompt {
+    display: flex;
+}
+
+#serverMenu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#serverHeader {
+    height: 50px;
+    width: 98%;
+    display: flex;
+    flex-direction: row;
+}
+
+#gameListings {
+    border: none;
+    border-color: black;
+    display: flex;
+    flex-direction: column;
+    width: 98%;
+    height: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+}
+
+.server__game-listing {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    height: fit-content;
+    padding: 1%;
+}
+
+.server__game-listing:hover {
+    cursor: pointer;
+    background-color: gray;
+}
+
+.server__game-listing--name {
+    height: 15px;
+    width: 30%;
+}
+
+.server__game-listing--creator {
+    height: 15px;
+    width: 30%;
+}
+
+.server__game-listing--num {
+    height: 15px;
+    width: 10%;
+}
+
+.server__game-listing--status {
+    color: lightgreen;
+    height: 15px;
+    width: 10%;
+}

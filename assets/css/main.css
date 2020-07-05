@@ -1,0 +1,44 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    padding: 0%;
+    background-color: #2b363d;
+    display: flex;
+    flex-direction: row;
+    overflow-y: hidden;
+    font-family: 'Roboto';
+    user-select: none;
+}
+
+#mainContainer {
+    color: lightgrey;
+    border-color: black;
+    height: 98%;
+    width: 99%;
+    background: #353535;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+}
+
+#activityCntr {
+    border-color: inherit;
+    height: 99%;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #aaa9a9;
+    background-color: rgb(66, 66, 66);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: black;
+    border-radius: 10px;
+}

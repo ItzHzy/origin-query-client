@@ -1,0 +1,61 @@
+.tabs {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 77px;
+}
+
+.tab {
+    height: 36px;
+    width: 36px;
+    margin-top: 0;
+    margin-bottom: auto;
+    margin-left: 10px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.tab:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.tabImage {
+    height: 100%;
+    width: 100%;
+    ;
+    margin: auto;
+    transition: rotate 5s;
+    /* https://codepen.io/sosuke/pen/Pjoqqp */
+    filter: invert(64%) sepia(14%) saturate(807%) hue-rotate(219deg) brightness(100%) contrast(94%);
+}
+
+#menuIcon {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+#builderIcon {
+    margin-bottom: 0;
+}
+
+#statsIcon {
+    margin-bottom: 0;
+}
+
+#serverIcon {
+    margin-top: auto;
+    margin-bottom: 10px;
+}
+
+#gameIcon {
+    margin-top: 20px;
+}
+
+#settingsIcon {
+    margin-bottom: 10px;
+}
+
+#infoIcon {
+    margin-bottom: 15px;
+}
