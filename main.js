@@ -1,7 +1,6 @@
 console.log('main process working')
 
 const electron = require("electron");
-const { ipcMain } = require('electron')
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow
@@ -51,8 +50,3 @@ app.on('activate', () => {
         createWindow()
     }
 });
-
-ipcMain.on('synchronous-message', (event, arg) => {
-    console.log(arg) // prints "ping"
-    event.returnValue = 'pong'
-})

@@ -57,42 +57,6 @@
 
         <div id="activityCntr">
 
-            <div class="promptable" id="createGamePrompt">
-                <p class="prompt-hdr">Create Game</p>
-                <form name="createGame" style="display:flex; width: 100%; margin-left: auto;margin-right: auto;">
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 90%; margin-left: auto;margin-right: auto;">
-                        <input class="mdl-textfield__input" type="text" id="title">
-                        <label class="mdl-textfield__label" for="title">Title</label>
-                    </div>
-                </form>
-                <form id="numPlayersChosen" style="display: flex;flex-direction: row;justify-content: space-evenly;margin-top: 30px;">
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-1">
-                        <input type="radio" id="numPlayersChosen-1" class="mdl-radio__button" name="num" value="1">
-                        <span class="mdl-radio__label">1 Player</span>
-                    </label>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-2">
-                        <input type="radio" id="numPlayersChosen-2" class="mdl-radio__button" name="num" value="2">
-                        <span class="mdl-radio__label">2 Player</span>
-                    </label>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-3">
-                        <input type="radio" id="numPlayersChosen-3" class="mdl-radio__button" name="num" value="3">
-                        <span class="mdl-radio__label">3 Player</span>
-                    </label>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-4">
-                        <input type="radio" id="numPlayersChosen-4" class="mdl-radio__button" name="num" value="4">
-                        <span class="mdl-radio__label">4 Player</span>
-                    </label>
-                </form>
-                <div style="display: flex;flex-direction: row; margin-bottom: 35px;margin-top: auto;justify-content: flex-end;">
-                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="cancelCreationButton">
-                        <i class="material-icons">clear</i>
-                    </button>
-                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="createGameButton">
-                        <i class="material-icons">done</i>
-                    </button>
-                </div>
-            </div>
-
             <div id="builder-page">
 
                 <div class="header" id="builder-hdr deckName">
@@ -164,6 +128,42 @@
 
             <div id="server-page">
 
+                <div class="promptable" id="createGamePrompt">
+                    <p class="prompt-hdr">Create Game</p>
+                    <form name="createGame" style="display:flex; width: 100%; margin-left: auto;margin-right: auto;">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 90%; margin-left: auto;margin-right: auto;">
+                            <input class="mdl-textfield__input" type="text" id="title">
+                            <label class="mdl-textfield__label" for="title">Title</label>
+                        </div>
+                    </form>
+                    <form id="numPlayersChosen" style="display: flex;flex-direction: row;justify-content: space-evenly;margin-top: 30px;">
+                        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-1">
+                        <input type="radio" id="numPlayersChosen-1" class="mdl-radio__button" name="num" value="1">
+                        <span class="mdl-radio__label">1 Player</span>
+                    </label>
+                        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-2">
+                        <input type="radio" id="numPlayersChosen-2" class="mdl-radio__button" name="num" value="2">
+                        <span class="mdl-radio__label">2 Player</span>
+                    </label>
+                        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-3">
+                        <input type="radio" id="numPlayersChosen-3" class="mdl-radio__button" name="num" value="3">
+                        <span class="mdl-radio__label">3 Player</span>
+                    </label>
+                        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="numPlayersChosen-4">
+                        <input type="radio" id="numPlayersChosen-4" class="mdl-radio__button" name="num" value="4">
+                        <span class="mdl-radio__label">4 Player</span>
+                    </label>
+                    </form>
+                    <div style="display: flex;flex-direction: row; margin-bottom: 35px;margin-top: auto;justify-content: flex-end;">
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="cancelCreationButton">
+                        <i class="material-icons">clear</i>
+                    </button>
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="createGameButton">
+                        <i class="material-icons">done</i>
+                    </button>
+                    </div>
+                </div>
+
                 <div class="promptable prompt" id="login-prompt">
                     <p class="prompt-hdr">Login</p>
                     <form id="username" style="display:flex; width: 100%; margin-left: auto;margin-right: auto;">
@@ -184,6 +184,10 @@
                             <label class="mdl-textfield__label" for="server-entry">Server Address</label>
                         </div>
                     </form>
+                    <label style="margin-left: 40px;margin-top: 20px;" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="remember-me">
+                        <input type="checkbox" id="remember-me" class="mdl-checkbox__input">
+                        <span class="mdl-checkbox__label">Remember Me</span>
+                    </label>
                     <div style="display: flex;flex-direction: row; margin-bottom: 35px;margin-top: auto;justify-content: flex-end;">
                         <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="login-btn">
                             <i class="material-icons">done</i>

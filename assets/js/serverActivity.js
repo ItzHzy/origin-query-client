@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-import { settings } from './config.js'
+import { settings, writeToConfig } from './config.js'
 import { joinGame, ready, notReady, startGame } from './gameActivity.js'
 export { serverConn, cancelGameCreation }
 
@@ -25,6 +25,25 @@ createGamePromptButton.addEventListener('click', gameCreationPrompt)
 cancelCreationButton.addEventListener('click', cancelGameCreation)
 createGameButton.addEventListener('click', createGame)
 loginBtn.addEventListener('click', loginRequest)
+document.getElementById('remember-me').addEventListener('click', (e) => {
+    if (e.srcElement.checked) {
+        settings.username = document.forms["username"]["username-entry"].value
+        settings.pass = document.forms["password"]["password-entry"].value
+        settings.serverAddr = document.forms["server"]["server-entry"].value
+        settings.rememberMe = true
+        writeToConfig()
+    } else {
+        settings.rememberMe = false
+        writeToConfig()
+    }
+})
+
+if (settings.rememberMe == true) {
+    document.forms["username"]["username-entry"].value = settings.username
+    document.forms["password"]["password-entry"].value = settings.pass
+    document.forms["server"]["server-entry"].value = settings.serverAddr
+    document.getElementById('remember-me').checked = true
+}
 
 
 function loginRequest() {
@@ -66,7 +85,7 @@ function loginFailed() {
 }
 
 function gameCreationPrompt(e) {
-    document.getElementById("server-page").style.filter = "blur(5px)"
+    menu.style.filter = "blur(5px)"
     createGamePrompt.style.display = "flex"
 
     window.setTimeout(function() {
@@ -76,7 +95,7 @@ function gameCreationPrompt(e) {
 
 function cancelGameCreation() {
     createGamePrompt.classList.remove("prompt")
-    document.getElementById("server-page").style.filter = ""
+    menu.style.filter = ""
     title.value = ""
     numPlayers.value = ""
 }

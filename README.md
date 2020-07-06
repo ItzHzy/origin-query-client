@@ -1,1 +1,1 @@
-The client code for a MTG Rules Engine implementation
+The client code for a MTG rules engine implementation built with electron

@@ -149,10 +149,8 @@ function notReady(data) {
 
 function startGame(data) {
     var started = false;
-    var finished = false
+    var finished = false;
     var height;
-
-    console.log(data)
 
     switch (data.numPlayers) {
         case 1:
@@ -162,15 +160,14 @@ function startGame(data) {
             height = " height-50"
             break
         case 3:
-            height = " height-30"
+            height = " height-33"
             break
         case 4:
             height = " height-25"
     }
 
     for (const index in data.players) {
-        if (data.players[index] == currPlayerID) {
-            console.log("called for me");
+        if (data.players[index][0] == currPlayerID) {
             started = true
 
             var side = document.createElement('div')
@@ -178,18 +175,120 @@ function startGame(data) {
 
             var profile = document.createElement('div')
             profile.className = "player-profile"
+            profile.setAttribute('data-owned-by', data.players[index][0])
+
+            var pfp = document.createElement('div')
+            pfp.className = "player-profile__pfp"
+            var pic = document.createElement('img')
+            pfp.appendChild(pic)
+            profile.appendChild(pfp)
+            if (data.players[index][4] == null) {
+                pic.src = "assets/icons/default-pfp.svg"
+            } else {
+                pic.src = "assets/icons/default-pfp.svg"
+            }
+
+            var name = document.createElement('div')
+            name.className = "player-profile__name"
+            name.appendChild(document.createTextNode(data.players[index][1]))
+            profile.appendChild(name)
+
+            var counts = document.createElement('div')
+            counts.className = "player-profile__counts"
+            profile.appendChild(counts)
+
+            var pool = document.createElement('div')
+            pool.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/mana-pool.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            pool.appendChild(icon)
+            pool.appendChild(num)
+            counts.appendChild(pool)
+
+            var handCount = document.createElement('div')
+            handCount.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/hand.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            handCount.appendChild(icon)
+            handCount.appendChild(num)
+            counts.appendChild(handCount)
+
+            var life = document.createElement('div')
+            life.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/heart.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            life.appendChild(icon)
+            life.appendChild(num)
+            counts.appendChild(life)
+
+            var counts = document.createElement('div')
+            counts.className = "player-profile__counts"
+            profile.appendChild(counts)
+
+
+            var exile = document.createElement('div')
+            exile.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/exile.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            exile.appendChild(icon)
+            exile.appendChild(num)
+            counts.appendChild(exile)
+
+            var grave = document.createElement('div')
+            grave.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/grave.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            grave.appendChild(icon)
+            grave.appendChild(num)
+            counts.appendChild(grave)
+
+            var deck = document.createElement('div')
+            deck.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/deck.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            deck.appendChild(icon)
+            deck.appendChild(num)
+            counts.appendChild(deck)
+
 
             var subSide = document.createElement('div')
             subSide.className = "friendly-side"
 
             var field = document.createElement('div')
             field.className = "field"
+            field.setAttribute('data-owned-by', data.players[index][0])
 
             var lands = document.createElement('div')
             lands.className = "lands"
+            lands.setAttribute('data-owned-by', data.players[index][0])
 
             var hand = document.createElement('div')
             hand.className = "hand"
+
 
             subSide.appendChild(field)
             subSide.appendChild(lands)
@@ -202,13 +301,111 @@ function startGame(data) {
 
         }
 
-        if (started && data.players[index] != currPlayerID) {
-            console.log("called for hostile");
+        if (started && data.players[index][0] != currPlayerID) {
             var side = document.createElement('div')
             side.className = "board-side" + height
 
             var profile = document.createElement('div')
             profile.className = "player-profile"
+            profile.setAttribute('data-owned-by', data.players[index][0])
+
+            var pfp = document.createElement('div')
+            pfp.className = "player-profile__pfp"
+            var pic = document.createElement('img')
+            pfp.appendChild(pic)
+            profile.appendChild(pfp)
+            if (data.players[index][4] == null) {
+                pic.src = "assets/icons/default-pfp.svg"
+            } else {
+                pic.src = "assets/icons/default-pfp.svg"
+            }
+
+            var name = document.createElement('div')
+            name.className = "player-profile__name"
+            name.appendChild(document.createTextNode(data.players[index][1]))
+            profile.appendChild(name)
+
+            var counts = document.createElement('div')
+            counts.className = "player-profile__counts"
+            profile.appendChild(counts)
+
+            var pool = document.createElement('div')
+            pool.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/mana-pool.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            pool.appendChild(icon)
+            pool.appendChild(num)
+            counts.appendChild(pool)
+
+            var handCount = document.createElement('div')
+            handCount.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/hand.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            handCount.appendChild(icon)
+            handCount.appendChild(num)
+            counts.appendChild(handCount)
+
+            var life = document.createElement('div')
+            life.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/heart.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            life.appendChild(icon)
+            life.appendChild(num)
+            counts.appendChild(life)
+
+            var counts = document.createElement('div')
+            counts.className = "player-profile__counts"
+            profile.appendChild(counts)
+
+
+            var exile = document.createElement('div')
+            exile.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/exile.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            exile.appendChild(icon)
+            exile.appendChild(num)
+            counts.appendChild(exile)
+
+            var grave = document.createElement('div')
+            grave.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/grave.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            grave.appendChild(icon)
+            grave.appendChild(num)
+            counts.appendChild(grave)
+
+            var deck = document.createElement('div')
+            deck.className = "player-profile__count"
+            var icon = document.createElement('img')
+            icon.className = "player-profile__count--icon"
+            icon.src = "assets/icons/deck.svg"
+            var num = document.createElement('div')
+            num.className = "player-profile__count--num"
+            num.appendChild(document.createTextNode('0'))
+            deck.appendChild(icon)
+            deck.appendChild(num)
+            counts.appendChild(deck)
+
 
             var subSide = document.createElement('div')
             subSide.className = "hostile-side"
@@ -216,10 +413,12 @@ function startGame(data) {
             var field = document.createElement('div')
             field.className = "field"
             field.style.height = "49%";
+            field.setAttribute('data-owned-by', data.players[index][0])
 
             var lands = document.createElement('div')
             lands.className = "lands"
             lands.style.height = "49%";
+            lands.setAttribute('data-owned-by', data.players[index][0])
 
             subSide.appendChild(field)
             subSide.appendChild(lands)
@@ -233,7 +432,7 @@ function startGame(data) {
 
     for (const index in data.players) {
         if (!finished) {
-            if (data.players[index] == currPlayerID) {
+            if (data.players[index][0] == currPlayerID) {
                 finished = true
             } else {
 
@@ -242,6 +441,104 @@ function startGame(data) {
 
                 var profile = document.createElement('div')
                 profile.className = "player-profile"
+                profile.setAttribute('data-owned-by', data.players[index][0])
+
+                var pfp = document.createElement('div')
+                pfp.className = "player-profile__pfp"
+                var pic = document.createElement('img')
+                pfp.appendChild(pic)
+                profile.appendChild(pfp)
+                if (data.players[index][4] == null) {
+                    pic.src = "assets/icons/default-pfp.svg"
+                } else {
+                    pic.src = "assets/icons/default-pfp.svg"
+                }
+
+                var name = document.createElement('div')
+                name.className = "player-profile__name"
+                name.appendChild(document.createTextNode(data.players[index][1]))
+                profile.appendChild(name)
+
+                var counts = document.createElement('div')
+                counts.className = "player-profile__counts"
+                profile.appendChild(counts)
+
+                var pool = document.createElement('div')
+                pool.className = "player-profile__count"
+                var icon = document.createElement('img')
+                icon.className = "player-profile__count--icon"
+                icon.src = "assets/icons/mana-pool.svg"
+                var num = document.createElement('div')
+                num.className = "player-profile__count--num"
+                num.appendChild(document.createTextNode('0'))
+                pool.appendChild(icon)
+                pool.appendChild(num)
+                counts.appendChild(pool)
+
+                var handCount = document.createElement('div')
+                handCount.className = "player-profile__count"
+                var icon = document.createElement('img')
+                icon.className = "player-profile__count--icon"
+                icon.src = "assets/icons/hand.svg"
+                var num = document.createElement('div')
+                num.className = "player-profile__count--num"
+                num.appendChild(document.createTextNode('0'))
+                handCount.appendChild(icon)
+                handCount.appendChild(num)
+                counts.appendChild(handCount)
+
+                var life = document.createElement('div')
+                life.className = "player-profile__count"
+                var icon = document.createElement('img')
+                icon.className = "player-profile__count--icon"
+                icon.src = "assets/icons/heart.svg"
+                var num = document.createElement('div')
+                num.className = "player-profile__count--num"
+                num.appendChild(document.createTextNode('0'))
+                life.appendChild(icon)
+                life.appendChild(num)
+                counts.appendChild(life)
+
+                var counts = document.createElement('div')
+                counts.className = "player-profile__counts"
+                profile.appendChild(counts)
+
+
+                var exile = document.createElement('div')
+                exile.className = "player-profile__count"
+                var icon = document.createElement('img')
+                icon.className = "player-profile__count--icon"
+                icon.src = "assets/icons/exile.svg"
+                var num = document.createElement('div')
+                num.className = "player-profile__count--num"
+                num.appendChild(document.createTextNode('0'))
+                exile.appendChild(icon)
+                exile.appendChild(num)
+                counts.appendChild(exile)
+
+                var grave = document.createElement('div')
+                grave.className = "player-profile__count"
+                var icon = document.createElement('img')
+                icon.className = "player-profile__count--icon"
+                icon.src = "assets/icons/grave.svg"
+                var num = document.createElement('div')
+                num.className = "player-profile__count--num"
+                num.appendChild(document.createTextNode('0'))
+                grave.appendChild(icon)
+                grave.appendChild(num)
+                counts.appendChild(grave)
+
+                var deck = document.createElement('div')
+                deck.className = "player-profile__count"
+                var icon = document.createElement('img')
+                icon.className = "player-profile__count--icon"
+                icon.src = "assets/icons/deck.svg"
+                var num = document.createElement('div')
+                num.className = "player-profile__count--num"
+                num.appendChild(document.createTextNode('0'))
+                deck.appendChild(icon)
+                deck.appendChild(num)
+                counts.appendChild(deck)
 
                 var subSide = document.createElement('div')
                 subSide.className = "hostile-side"
@@ -249,10 +546,12 @@ function startGame(data) {
                 var field = document.createElement('div')
                 field.className = "field"
                 field.style.height = "49%";
+                field.setAttribute('data-owned-by', data.players[index][0])
 
                 var lands = document.createElement('div')
                 lands.className = "lands"
                 lands.style.height = "49%";
+                lands.setAttribute('data-owned-by', data.players[index][0])
 
                 subSide.appendChild(field)
                 subSide.appendChild(lands)

@@ -46,6 +46,12 @@
     width: 750px;
 }
 
+.prompt--thin {
+    opacity: 1;
+    height: 550px;
+    width: 450px;
+}
+
 .clickable:active>i {
     position: relative;
     top: 2px;
@@ -65,8 +71,8 @@
     height: 25%;
 }
 
-.height-30 {
-    height: 30%;
+.height-33 {
+    height: 33%;
 }
 
 .height-50 {
