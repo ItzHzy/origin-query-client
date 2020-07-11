@@ -290,3 +290,10 @@
     height: 20%;
     width: 100%;
 }
+
+.card {
+    border-radius: 5px;
+    height: 168px;
+    width: 120px;
+    margin-left: 5px;
+}

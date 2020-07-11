@@ -1,7 +1,7 @@
 import { changeToGameActivity } from './tabs.js'
 import { findCardByID } from './database.js'
 import { serverConn } from './serverActivity.js'
-export { joinGame, ready, notReady, startGame }
+export { joinGame, ready, notReady, startGame, stateUpdate }
 
 const { dialog } = require('electron').remote
 const path = require('path')
@@ -288,7 +288,7 @@ function startGame(data) {
 
             var hand = document.createElement('div')
             hand.className = "hand"
-
+            hand.setAttribute('data-owned-by', data.players[index][0])
 
             subSide.appendChild(field)
             subSide.appendChild(lands)
@@ -568,4 +568,26 @@ function startGame(data) {
 
     lobby.style.display = "none";
     gameBoard.style.display = "flex";
+}
+
+function stateUpdate(data) {
+    // Card Updates
+    for (const index in data.cards) {
+        var card = data.cards[index]
+        if (document.getElementById(card.instanceID) == null) {
+            if (card.type != "Remove") {
+                var instance = document.createElement('img')
+                instance.id = card.instanceID
+                instance.classList.add("card")
+                findCardByID(card.data[0], (err, card) => {
+                    instance.src = card.image_uris.normal
+                })
+                console.log("[data-owned-by=" + card.data[4] + "]");
+                document.querySelector("." + card.data[6], "[data-owned-by=" + card.data[4] + "]").appendChild(instance)
+
+            }
+        } else {
+            var instance = document.getElementById(card.instanceID)
+        }
+    }
 }
