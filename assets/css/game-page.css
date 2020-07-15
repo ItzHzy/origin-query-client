@@ -293,7 +293,7 @@
 
 .card {
     border-radius: 5px;
-    height: 168px;
-    width: 120px;
+    height: 90%;
+    width: auto;
     margin-left: 5px;
 }
