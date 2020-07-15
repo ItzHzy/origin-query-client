@@ -1,4 +1,4 @@
-import { cmcChart } from './statsActivity.js'
+import { cmcChart } from './stats-page.js'
 import { findCardByID, findCardsByNameQuery } from './database.js'
 
 const { dialog } = require('electron').remote

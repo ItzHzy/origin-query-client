@@ -1,4 +1,4 @@
-import { cancelGameCreation } from './serverActivity.js'
+import { cancelGameCreation } from './server-page.js'
 export { changeToGameActivity }
 
 var currentActivity = document.getElementById("info-page");

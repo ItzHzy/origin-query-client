@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 import { settings, writeToConfig } from './config.js'
-import { joinGame, ready, notReady, startGame, lobby__readyBtn } from './gameActivity.js'
-import { stateUpdate } from './gameActivity.js'
+import { joinGame, ready, notReady, startGame, lobby__readyBtn } from './game-page.js'
+import { stateUpdate } from './game-page.js'
 export { serverConn, cancelGameCreation }
 
 const menu = document.getElementById("serverMenu")

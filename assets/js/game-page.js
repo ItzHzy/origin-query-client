@@ -1,6 +1,6 @@
 import { changeToGameActivity } from './tabs.js'
 import { findCardByID } from './database.js'
-import { serverConn } from './serverActivity.js'
+import { serverConn } from './server-page.js'
 export { joinGame, ready, notReady, startGame, stateUpdate, lobby__readyBtn }
 
 const { dialog } = require('electron').remote
