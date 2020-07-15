@@ -193,8 +193,6 @@
     border-top: none;
 }
 
-.player-profile--large {}
-
 .player-profile__pfp {
     overflow-y: hidden;
     overflow-x: hidden;
@@ -245,8 +243,6 @@
     margin-right: 0px;
     font-size: xx-large;
 }
-
-.player-profile__flavor-text {}
 
 .friendly-side {
     color: black;
