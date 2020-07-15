@@ -1,7 +1,7 @@
 import { changeToGameActivity } from './tabs.js'
 import { findCardByID } from './database.js'
 import { serverConn } from './serverActivity.js'
-export { joinGame, ready, notReady, startGame, stateUpdate }
+export { joinGame, ready, notReady, startGame, stateUpdate, lobby__readyBtn }
 
 const { dialog } = require('electron').remote
 const path = require('path')
@@ -85,8 +85,6 @@ function chooseDeck() {
 
     var data = JSON.parse(fs.readFileSync(path.resolve(filePath)))
 
-    lobby__readyBtn.style.display = "block"
-
     for (const id in data) {
         findCardByID(id, (err, card) => {
             var entry = document.createElement("div")
@@ -154,277 +152,68 @@ function startGame(data) {
 
     switch (data.numPlayers) {
         case 1:
-            height = " height-100"
+            height = "height-100"
             break
         case 2:
-            height = " height-50"
+            height = "height-50"
             break
         case 3:
-            height = " height-33"
+            height = "height-33"
             break
         case 4:
-            height = " height-25"
+            height = "height-25"
     }
 
     for (const index in data.players) {
         if (data.players[index][0] == currPlayerID) {
             started = true
 
-            var side = document.createElement('div')
-            side.className = "board-side" + height
+            var side = document.getElementById("board-side-friendly-template").cloneNode(true)
+            side.style.display = "flex"
+            side.classList.add(height)
+            side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".hand").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
 
-            var profile = document.createElement('div')
-            profile.className = "player-profile"
-            profile.setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
+            side.querySelectorAll(".player-profile__count--num")[0].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[1].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[2].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[3].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[4].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[5].appendChild(document.createTextNode("0"))
 
-            var pfp = document.createElement('div')
-            pfp.className = "player-profile__pfp"
-            var pic = document.createElement('img')
-            pfp.appendChild(pic)
-            profile.appendChild(pfp)
             if (data.players[index][4] == null) {
-                pic.src = "assets/icons/default-pfp.svg"
+                // pic.src = "assets/icons/default-pfp.svg"
             } else {
-                pic.src = "assets/icons/default-pfp.svg"
+                // pic.src = "assets/icons/default-pfp.svg"
             }
 
-            var name = document.createElement('div')
-            name.className = "player-profile__name"
-            name.appendChild(document.createTextNode(data.players[index][1]))
-            profile.appendChild(name)
-
-            var counts = document.createElement('div')
-            counts.className = "player-profile__counts"
-            profile.appendChild(counts)
-
-            var pool = document.createElement('div')
-            pool.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/mana-pool.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            pool.appendChild(icon)
-            pool.appendChild(num)
-            counts.appendChild(pool)
-
-            var handCount = document.createElement('div')
-            handCount.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/hand.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            handCount.appendChild(icon)
-            handCount.appendChild(num)
-            counts.appendChild(handCount)
-
-            var life = document.createElement('div')
-            life.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/heart.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            life.appendChild(icon)
-            life.appendChild(num)
-            counts.appendChild(life)
-
-            var counts = document.createElement('div')
-            counts.className = "player-profile__counts"
-            profile.appendChild(counts)
-
-
-            var exile = document.createElement('div')
-            exile.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/exile.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            exile.appendChild(icon)
-            exile.appendChild(num)
-            counts.appendChild(exile)
-
-            var grave = document.createElement('div')
-            grave.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/grave.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            grave.appendChild(icon)
-            grave.appendChild(num)
-            counts.appendChild(grave)
-
-            var deck = document.createElement('div')
-            deck.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/deck.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            deck.appendChild(icon)
-            deck.appendChild(num)
-            counts.appendChild(deck)
-
-
-            var subSide = document.createElement('div')
-            subSide.className = "friendly-side"
-
-            var field = document.createElement('div')
-            field.className = "field"
-            field.setAttribute('data-owned-by', data.players[index][0])
-
-            var lands = document.createElement('div')
-            lands.className = "lands"
-            lands.setAttribute('data-owned-by', data.players[index][0])
-
-            var hand = document.createElement('div')
-            hand.className = "hand"
-            hand.setAttribute('data-owned-by', data.players[index][0])
-
-            subSide.appendChild(field)
-            subSide.appendChild(lands)
-            subSide.appendChild(hand)
-
-            side.appendChild(profile)
-            side.appendChild(subSide)
-
             gameBoard.appendChild(side)
-
         }
 
         if (started && data.players[index][0] != currPlayerID) {
-            var side = document.createElement('div')
-            side.className = "board-side" + height
+            var side = document.getElementById("board-side-hostile-template").cloneNode(true)
+            side.style.display = "flex"
+            side.classList.add(height)
+            side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
 
-            var profile = document.createElement('div')
-            profile.className = "player-profile"
-            profile.setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
+            side.querySelectorAll(".player-profile__count--num")[0].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[1].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[2].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[3].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[4].appendChild(document.createTextNode("0"))
+            side.querySelectorAll(".player-profile__count--num")[5].appendChild(document.createTextNode("0"))
 
-            var pfp = document.createElement('div')
-            pfp.className = "player-profile__pfp"
-            var pic = document.createElement('img')
-            pfp.appendChild(pic)
-            profile.appendChild(pfp)
             if (data.players[index][4] == null) {
-                pic.src = "assets/icons/default-pfp.svg"
+                // pic.src = "assets/icons/default-pfp.svg"
             } else {
-                pic.src = "assets/icons/default-pfp.svg"
+                // pic.src = "assets/icons/default-pfp.svg"
             }
-
-            var name = document.createElement('div')
-            name.className = "player-profile__name"
-            name.appendChild(document.createTextNode(data.players[index][1]))
-            profile.appendChild(name)
-
-            var counts = document.createElement('div')
-            counts.className = "player-profile__counts"
-            profile.appendChild(counts)
-
-            var pool = document.createElement('div')
-            pool.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/mana-pool.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            pool.appendChild(icon)
-            pool.appendChild(num)
-            counts.appendChild(pool)
-
-            var handCount = document.createElement('div')
-            handCount.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/hand.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            handCount.appendChild(icon)
-            handCount.appendChild(num)
-            counts.appendChild(handCount)
-
-            var life = document.createElement('div')
-            life.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/heart.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            life.appendChild(icon)
-            life.appendChild(num)
-            counts.appendChild(life)
-
-            var counts = document.createElement('div')
-            counts.className = "player-profile__counts"
-            profile.appendChild(counts)
-
-
-            var exile = document.createElement('div')
-            exile.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/exile.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            exile.appendChild(icon)
-            exile.appendChild(num)
-            counts.appendChild(exile)
-
-            var grave = document.createElement('div')
-            grave.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/grave.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            grave.appendChild(icon)
-            grave.appendChild(num)
-            counts.appendChild(grave)
-
-            var deck = document.createElement('div')
-            deck.className = "player-profile__count"
-            var icon = document.createElement('img')
-            icon.className = "player-profile__count--icon"
-            icon.src = "assets/icons/deck.svg"
-            var num = document.createElement('div')
-            num.className = "player-profile__count--num"
-            num.appendChild(document.createTextNode('0'))
-            deck.appendChild(icon)
-            deck.appendChild(num)
-            counts.appendChild(deck)
-
-
-            var subSide = document.createElement('div')
-            subSide.className = "hostile-side"
-
-            var field = document.createElement('div')
-            field.className = "field"
-            field.style.height = "49%";
-            field.setAttribute('data-owned-by', data.players[index][0])
-
-            var lands = document.createElement('div')
-            lands.className = "lands"
-            lands.style.height = "49%";
-            lands.setAttribute('data-owned-by', data.players[index][0])
-
-            subSide.appendChild(field)
-            subSide.appendChild(lands)
-
-            side.appendChild(profile)
-            side.appendChild(subSide)
 
             gameBoard.appendChild(side)
         }
@@ -436,135 +225,31 @@ function startGame(data) {
                 finished = true
             } else {
 
-                var side = document.createElement('div')
-                side.className = "board-side" + height
+                var side = document.getElementById("board-side-hostile-template").cloneNode(true)
+                side.style.display = "flex"
+                side.classList.add(height)
+                side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
+                side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
+                side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
 
-                var profile = document.createElement('div')
-                profile.className = "player-profile"
-                profile.setAttribute('data-owned-by', data.players[index][0])
+                side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
+                side.querySelectorAll(".player-profile__count--num")[0].appendChild(document.createTextNode("0"))
+                side.querySelectorAll(".player-profile__count--num")[1].appendChild(document.createTextNode("0"))
+                side.querySelectorAll(".player-profile__count--num")[2].appendChild(document.createTextNode("0"))
+                side.querySelectorAll(".player-profile__count--num")[3].appendChild(document.createTextNode("0"))
+                side.querySelectorAll(".player-profile__count--num")[4].appendChild(document.createTextNode("0"))
+                side.querySelectorAll(".player-profile__count--num")[5].appendChild(document.createTextNode("0"))
 
-                var pfp = document.createElement('div')
-                pfp.className = "player-profile__pfp"
-                var pic = document.createElement('img')
-                pfp.appendChild(pic)
-                profile.appendChild(pfp)
                 if (data.players[index][4] == null) {
-                    pic.src = "assets/icons/default-pfp.svg"
+                    // pic.src = "assets/icons/default-pfp.svg"
                 } else {
-                    pic.src = "assets/icons/default-pfp.svg"
+                    // pic.src = "assets/icons/default-pfp.svg"
                 }
-
-                var name = document.createElement('div')
-                name.className = "player-profile__name"
-                name.appendChild(document.createTextNode(data.players[index][1]))
-                profile.appendChild(name)
-
-                var counts = document.createElement('div')
-                counts.className = "player-profile__counts"
-                profile.appendChild(counts)
-
-                var pool = document.createElement('div')
-                pool.className = "player-profile__count"
-                var icon = document.createElement('img')
-                icon.className = "player-profile__count--icon"
-                icon.src = "assets/icons/mana-pool.svg"
-                var num = document.createElement('div')
-                num.className = "player-profile__count--num"
-                num.appendChild(document.createTextNode('0'))
-                pool.appendChild(icon)
-                pool.appendChild(num)
-                counts.appendChild(pool)
-
-                var handCount = document.createElement('div')
-                handCount.className = "player-profile__count"
-                var icon = document.createElement('img')
-                icon.className = "player-profile__count--icon"
-                icon.src = "assets/icons/hand.svg"
-                var num = document.createElement('div')
-                num.className = "player-profile__count--num"
-                num.appendChild(document.createTextNode('0'))
-                handCount.appendChild(icon)
-                handCount.appendChild(num)
-                counts.appendChild(handCount)
-
-                var life = document.createElement('div')
-                life.className = "player-profile__count"
-                var icon = document.createElement('img')
-                icon.className = "player-profile__count--icon"
-                icon.src = "assets/icons/heart.svg"
-                var num = document.createElement('div')
-                num.className = "player-profile__count--num"
-                num.appendChild(document.createTextNode('0'))
-                life.appendChild(icon)
-                life.appendChild(num)
-                counts.appendChild(life)
-
-                var counts = document.createElement('div')
-                counts.className = "player-profile__counts"
-                profile.appendChild(counts)
-
-
-                var exile = document.createElement('div')
-                exile.className = "player-profile__count"
-                var icon = document.createElement('img')
-                icon.className = "player-profile__count--icon"
-                icon.src = "assets/icons/exile.svg"
-                var num = document.createElement('div')
-                num.className = "player-profile__count--num"
-                num.appendChild(document.createTextNode('0'))
-                exile.appendChild(icon)
-                exile.appendChild(num)
-                counts.appendChild(exile)
-
-                var grave = document.createElement('div')
-                grave.className = "player-profile__count"
-                var icon = document.createElement('img')
-                icon.className = "player-profile__count--icon"
-                icon.src = "assets/icons/grave.svg"
-                var num = document.createElement('div')
-                num.className = "player-profile__count--num"
-                num.appendChild(document.createTextNode('0'))
-                grave.appendChild(icon)
-                grave.appendChild(num)
-                counts.appendChild(grave)
-
-                var deck = document.createElement('div')
-                deck.className = "player-profile__count"
-                var icon = document.createElement('img')
-                icon.className = "player-profile__count--icon"
-                icon.src = "assets/icons/deck.svg"
-                var num = document.createElement('div')
-                num.className = "player-profile__count--num"
-                num.appendChild(document.createTextNode('0'))
-                deck.appendChild(icon)
-                deck.appendChild(num)
-                counts.appendChild(deck)
-
-                var subSide = document.createElement('div')
-                subSide.className = "hostile-side"
-
-                var field = document.createElement('div')
-                field.className = "field"
-                field.style.height = "49%";
-                field.setAttribute('data-owned-by', data.players[index][0])
-
-                var lands = document.createElement('div')
-                lands.className = "lands"
-                lands.style.height = "49%";
-                lands.setAttribute('data-owned-by', data.players[index][0])
-
-                subSide.appendChild(field)
-                subSide.appendChild(lands)
-
-                side.appendChild(profile)
-                side.appendChild(subSide)
 
                 gameBoard.appendChild(side)
             }
         }
     }
-
-
 
     lobby.style.display = "none";
     gameBoard.style.display = "flex";
@@ -579,11 +264,10 @@ function stateUpdate(data) {
                 var instance = document.createElement('img')
                 instance.id = card.instanceID
                 instance.classList.add("card")
-                findCardByID(card.data[0], (err, card) => {
+                findCardByID(card.data.oracle, (err, card) => {
                     instance.src = card.image_uris.normal
                 })
-                console.log("[data-owned-by=" + card.data[4] + "]");
-                document.querySelector("." + card.data[6], "[data-owned-by=" + card.data[4] + "]").appendChild(instance)
+                document.querySelector("." + card.data.zone, "[data-owned-by=" + card.data.controller + "]").appendChild(instance)
 
             }
         } else {

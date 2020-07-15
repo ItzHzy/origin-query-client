@@ -177,7 +177,7 @@
 
 .board-side {
     color: black;
-    display: flex;
+    display: none;
     flex-direction: row;
     width: 100%;
     border-style: solid;

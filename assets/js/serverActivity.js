@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 import { settings, writeToConfig } from './config.js'
-import { joinGame, ready, notReady, startGame } from './gameActivity.js'
+import { joinGame, ready, notReady, startGame, lobby__readyBtn } from './gameActivity.js'
 import { stateUpdate } from './gameActivity.js'
 export { serverConn, cancelGameCreation }
 
@@ -246,7 +246,12 @@ function msg_handler(data) {
             notReady(msg.data)
             break;
 
+        case "Choose Deck":
+            lobby__readyBtn.style.display = "block"
+            break;
+
         case "Start Game":
+            console.log("Called");
             startGame(msg.data)
             break;
 
