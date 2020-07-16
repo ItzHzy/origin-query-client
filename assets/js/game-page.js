@@ -15,11 +15,11 @@ const lobby__playerList = document.getElementById("lobby__player-list")
 const lobby__decklist = document.getElementById("lobby__deck-list")
 const lobby__enhancedCardImg = document.getElementById("lobby__enhanced-card-img")
 const failedGameMSG = document.getElementById("failed-game-MSG")
-
 const gameBoard = document.getElementById('game-board')
 
 var currGameID;
 var currPlayerID;
+var currPrompt;
 
 lobby__chooseDeckBtn.addEventListener('click', chooseDeck)
 lobby__readyBtn.addEventListener('click', () => {
@@ -190,6 +190,21 @@ function startGame(data) {
                 // pic.src = "assets/icons/default-pfp.svg"
             }
 
+            side.querySelector(".lands").addEventListener('dragenter', (e) => { e.preventDefault() })
+            side.querySelector(".lands").addEventListener('dragover', (e) => { e.preventDefault() })
+            side.querySelector(".lands").addEventListener("drop", (e) => {
+                e.preventDefault()
+                var msg = {
+                    "type": "Play Land",
+                    "data": {
+                        "playerID": currPlayerID,
+                        "gameID": currGameID,
+                        "instanceID": e.dataTransfer.getData("Text")
+                    }
+                }
+                serverConn.send(JSON.stringify(msg))
+            })
+
             gameBoard.appendChild(side)
         }
 
@@ -259,19 +274,69 @@ function stateUpdate(data) {
     // Card Updates
     for (const index in data.cards) {
         var card = data.cards[index]
-        if (document.getElementById(card.instanceID) == null) {
-            if (card.type != "Remove") {
-                var instance = document.createElement('img')
-                instance.id = card.instanceID
-                instance.classList.add("card")
-                findCardByID(card.data.oracle, (err, card) => {
-                    instance.src = card.image_uris.normal
-                })
-                document.querySelector("." + card.data.zone, "[data-owned-by=" + card.data.controller + "]").appendChild(instance)
+        if (document.querySelector("[data-instance-id=" + card.instanceID + "]") != null) {
+            var original = document.querySelector("[data-instance-id=" + card.instanceID + "]")
+            original.parentNode.removeChild(original)
+        }
 
+        if (card.type != "Remove") {
+            var instance = document.createElement('img')
+            instance.setAttribute("data-instance-id", card.instanceID)
+            instance.classList.add("card")
+            if (card.data.zone == "field" && card.data.types.includes("Type.LAND")) {
+                document.querySelector(".lands", "[data-owned-by=" + card.data.controller + "]").appendChild(instance)
+            } else {
+                document.querySelector("." + card.data.zone, "[data-owned-by=" + card.data.controller + "]").appendChild(instance)
             }
-        } else {
-            var instance = document.getElementById(card.instanceID)
+
+            findCardByID(card.data.oracle, (err, card) => {
+                instance.src = card.image_uris.normal
+            })
+
+            // var abilityPrompt = document.createElement('div')
+            // abilityPrompt.classList.add("promptable")
+            // var hdr = document.createElement('div')
+            // hdr.classList.add("prompt-hdr")
+            // hdr.appendChild(document.createTextNode("Abilites"))
+            // abilityPrompt.append(hdr)
+            // for (const index in card.data.abilities) {
+            //     var ability = document.createElement('div')
+            //     ability.setAttribute("data-ability-id", card.data.abilities[index][0])
+            //     ability.appendChild(document.createTextNode(card.data.abilities[index][1]))
+            // }
+            // instance.appendChild(abilityPrompt)
+
+            if (card.data.zone == "hand") {
+                instance.draggable = "true"
+                instance.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData("Text", e.srcElement.getAttribute('data-instance-id'))
+                })
+            } else {
+                instance.draggable = "false"
+            }
+
+
+        }
+    }
+
+
+    for (const index in data.players) {
+        var change = data.players[index]
+        switch (change.type) {
+            case "Zone Count Update":
+                var zone;
+                switch (change.data.type) {
+                    case "Hand":
+                        zone = 1
+                        break;
+                    case "Deck":
+                        zone = 5
+                        break;
+                }
+                var count = document.querySelectorAll('[data-owned-by=' + change.playerID + '] > .player-profile__counts > .player-profile__count > .player-profile__count--num')[zone]
+                count.removeChild(count.lastChild)
+                count.appendChild(document.createTextNode(change.data.num))
+                break
         }
     }
 }

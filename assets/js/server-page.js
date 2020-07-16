@@ -251,7 +251,6 @@ function msg_handler(data) {
             break;
 
         case "Start Game":
-            console.log("Called");
             startGame(msg.data)
             break;
 

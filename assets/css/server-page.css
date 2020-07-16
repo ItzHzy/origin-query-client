@@ -23,6 +23,7 @@
 }
 
 #gameListings {
+    overflow-y: scroll;
     border: none;
     border-color: black;
     display: flex;
