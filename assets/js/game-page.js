@@ -16,10 +16,12 @@ const lobby__decklist = document.getElementById("lobby__deck-list")
 const lobby__enhancedCardImg = document.getElementById("lobby__enhanced-card-img")
 const failedGameMSG = document.getElementById("failed-game-MSG")
 const gameBoard = document.getElementById('game-board')
+const gamePage = document.getElementById("game-page")
 
 var currGameID;
 var currPlayerID;
 var currPrompt;
+var blurred;
 
 lobby__chooseDeckBtn.addEventListener('click', chooseDeck)
 lobby__readyBtn.addEventListener('click', () => {
@@ -41,6 +43,14 @@ lobby__notReadyBtn.addEventListener('click', () => {
         }
     }
     serverConn.send(JSON.stringify(msg))
+})
+
+gameBoard.addEventListener('click', (e) => {
+    if (currPrompt != undefined && currPrompt != null) {
+        currPrompt.classList.remove("prompt")
+        currPrompt = null
+        blurred.style.filter = "none"
+    }
 })
 
 function joinGame(data) {
@@ -273,49 +283,77 @@ function startGame(data) {
 function stateUpdate(data) {
     // Card Updates
     for (const index in data.cards) {
-        var card = data.cards[index]
-        if (document.querySelector("[data-instance-id=" + card.instanceID + "]") != null) {
-            var original = document.querySelector("[data-instance-id=" + card.instanceID + "]")
-            original.parentNode.removeChild(original)
-        }
+        switch (data.cards[index].type) {
+            case "New Object":
 
-        if (card.type != "Remove") {
-            var instance = document.createElement('img')
-            instance.setAttribute("data-instance-id", card.instanceID)
-            instance.classList.add("card")
-            if (card.data.zone == "field" && card.data.types.includes("Type.LAND")) {
-                document.querySelector(".lands", "[data-owned-by=" + card.data.controller + "]").appendChild(instance)
-            } else {
-                document.querySelector("." + card.data.zone, "[data-owned-by=" + card.data.controller + "]").appendChild(instance)
-            }
+                var change = data.cards[index]
+                if (document.querySelector("[data-instance-id=" + change.instanceID + "]") != null) {
+                    var original = document.querySelector("[data-instance-id=" + change.instanceID + "]")
+                    original.parentNode.removeChild(original)
+                }
 
-            findCardByID(card.data.oracle, (err, card) => {
-                instance.src = card.image_uris.normal
-            })
+                if (change.type != "Remove") {
+                    var instance = document.createElement('img')
+                    instance.setAttribute("data-instance-id", change.instanceID)
+                    instance.classList.add("card")
+                    if (change.data.zone == "field" && change.data.types.includes("Type.LAND")) {
+                        document.querySelector(".lands", "[data-owned-by=" + change.data.controller + "]").appendChild(instance)
+                    } else {
+                        document.querySelector("." + change.data.zone, "[data-owned-by=" + change.data.controller + "]").appendChild(instance)
+                    }
 
-            // var abilityPrompt = document.createElement('div')
-            // abilityPrompt.classList.add("promptable")
-            // var hdr = document.createElement('div')
-            // hdr.classList.add("prompt-hdr")
-            // hdr.appendChild(document.createTextNode("Abilites"))
-            // abilityPrompt.append(hdr)
-            // for (const index in card.data.abilities) {
-            //     var ability = document.createElement('div')
-            //     ability.setAttribute("data-ability-id", card.data.abilities[index][0])
-            //     ability.appendChild(document.createTextNode(card.data.abilities[index][1]))
-            // }
-            // instance.appendChild(abilityPrompt)
+                    findCardByID(change.data.oracle, (err, card) => {
+                        instance.src = card.image_uris.normal
+                    })
 
-            if (card.data.zone == "hand") {
-                instance.draggable = "true"
-                instance.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData("Text", e.srcElement.getAttribute('data-instance-id'))
-                })
-            } else {
-                instance.draggable = "false"
-            }
+                    var abilityPrompt = document.createElement('div')
+                    abilityPrompt.classList.add("promptable")
 
+                    var hdr = document.createElement('div')
+                    hdr.classList.add("prompt-hdr")
+                    hdr.appendChild(document.createTextNode("Abilites"))
+                    abilityPrompt.append(hdr)
 
+                    if (change.data.abilities.length != 0) {
+                        for (const index in change.data.abilities) {
+                            var ability = document.createElement('div')
+                            ability.classList.add("ability")
+                            ability.setAttribute("data-ability-id", change.data.abilities[index][0])
+                            ability.appendChild(document.createTextNode(change.data.abilities[index][1]))
+                            abilityPrompt.appendChild(ability)
+                            ability.addEventListener('dblclick', (e) => {
+                                var msg = {
+
+                                }
+                            })
+                        }
+                        gamePage.appendChild(abilityPrompt)
+                        instance.addEventListener('dblclick', (e) => {
+                            gameBoard.style.filter = "blur(5px)"
+                            abilityPrompt.style.display = "flex"
+                            currPrompt = abilityPrompt
+                            blurred = gameBoard
+                            window.setTimeout(function() {
+                                abilityPrompt.classList.add("prompt")
+                            }, 100);
+                        })
+                    }
+                    if (card.data.zone == "hand") {
+                        instance.draggable = "true"
+                        instance.addEventListener('dragstart', (e) => {
+                            e.dataTransfer.setData("Text", e.srcElement.getAttribute('data-instance-id'))
+                        })
+                    } else {
+                        instance.draggable = "false"
+                    }
+                }
+                break;
+            case "Tap":
+                var card = document.querySelector("[data-instance-id=" + card.instanceID + "]")
+                if (card != null) {
+                    card.classList.add("tapped")
+                }
+                break;
         }
     }
 
@@ -336,7 +374,12 @@ function stateUpdate(data) {
                 var count = document.querySelectorAll('[data-owned-by=' + change.playerID + '] > .player-profile__counts > .player-profile__count > .player-profile__count--num')[zone]
                 count.removeChild(count.lastChild)
                 count.appendChild(document.createTextNode(change.data.num))
-                break
+                break;
+            case "Mana Update":
+                var count = document.querySelectorAll('[data-owned-by=' + change.playerID + '] > .player-profile__counts > .player-profile__count > .player-profile__count--num')[0]
+                count.removeChild(count.lastChild)
+                count.appendChild(document.createTextNode(change.data.num))
+                break;
         }
     }
 }
