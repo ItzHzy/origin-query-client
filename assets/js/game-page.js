@@ -45,13 +45,15 @@ lobby__notReadyBtn.addEventListener('click', () => {
     serverConn.send(JSON.stringify(msg))
 })
 
-gameBoard.addEventListener('click', (e) => {
+gameBoard.addEventListener('click', closePrompt)
+
+function closePrompt(e) {
     if (currPrompt != undefined && currPrompt != null) {
         currPrompt.classList.remove("prompt")
         currPrompt = null
         blurred.style.filter = "none"
     }
-})
+}
 
 function joinGame(data) {
     lobby__playerList.innerHTML = ""
@@ -283,10 +285,9 @@ function startGame(data) {
 function stateUpdate(data) {
     // Card Updates
     for (const index in data.cards) {
+        var change = data.cards[index]
         switch (data.cards[index].type) {
             case "New Object":
-
-                var change = data.cards[index]
                 if (document.querySelector("[data-instance-id=" + change.instanceID + "]") != null) {
                     var original = document.querySelector("[data-instance-id=" + change.instanceID + "]")
                     original.parentNode.removeChild(original)
@@ -323,8 +324,15 @@ function stateUpdate(data) {
                             abilityPrompt.appendChild(ability)
                             ability.addEventListener('dblclick', (e) => {
                                 var msg = {
-
+                                    "type": "Activate Ability",
+                                    "data": {
+                                        "gameID": currGameID,
+                                        "playerID": currPlayerID,
+                                        "abilityID": e.srcElement.getAttribute("data-ability-id"),
+                                    }
                                 }
+                                serverConn.send(JSON.stringify(msg))
+                                closePrompt(null)
                             })
                         }
                         gamePage.appendChild(abilityPrompt)
@@ -338,7 +346,7 @@ function stateUpdate(data) {
                             }, 100);
                         })
                     }
-                    if (card.data.zone == "hand") {
+                    if (change.data.zone == "hand") {
                         instance.draggable = "true"
                         instance.addEventListener('dragstart', (e) => {
                             e.dataTransfer.setData("Text", e.srcElement.getAttribute('data-instance-id'))
@@ -349,7 +357,7 @@ function stateUpdate(data) {
                 }
                 break;
             case "Tap":
-                var card = document.querySelector("[data-instance-id=" + card.instanceID + "]")
+                var card = document.querySelector("[data-instance-id=" + change.instanceID + "]")
                 if (card != null) {
                     card.classList.add("tapped")
                 }

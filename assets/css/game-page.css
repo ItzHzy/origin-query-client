@@ -265,15 +265,17 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    height: 60%;
+    height: fit-content;
     width: 100%;
+    margin-bottom: auto;
 }
 
 .lands {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    height: 20%;
+    min-height: 20%;
+    height: fit-content;
     width: 100%;
     border-style: solid;
     border-left: none;
@@ -283,18 +285,23 @@
     color: black;
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: center;
-    height: 20%;
+    height: fit-content;
+    min-height: 20%;
     width: 100%;
 }
 
 .card {
     cursor: pointer;
     width: auto;
+    max-height: 20em;
     margin-left: 5px;
+    margin-right: 20px;
     margin-bottom: auto;
     margin-top: auto;
     border-radius: 8px;
+    transition-duration: 0.25s;
 }
 
 .hand>.card {
@@ -305,12 +312,18 @@
     height: 90%;
 }
 
+.hand>.card {
+    margin: auto;
+}
+
 .card:hover {
     border-width: 3px;
 }
 
 .tapped {
     transform: rotate(90deg);
+    margin-left: 40px;
+    margin-right: 60px;
 }
 
 .ability {
