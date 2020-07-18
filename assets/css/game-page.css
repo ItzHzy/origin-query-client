@@ -166,6 +166,7 @@
 }
 
 #game-board {
+    box-sizing: border-box;
     color: black;
     display: none;
     flex-direction: column-reverse;
@@ -176,6 +177,7 @@
 }
 
 .board-side {
+    box-sizing: border-box;
     color: black;
     display: none;
     flex-direction: row;
@@ -184,6 +186,7 @@
 }
 
 .player-profile {
+    box-sizing: border-box;
     color: black;
     display: flex;
     flex-direction: column;
@@ -191,6 +194,7 @@
     width: 300px;
     border-style: solid;
     border-top: none;
+    border-bottom: none;
 }
 
 .player-profile__pfp {
@@ -249,7 +253,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    justify-content: space-between;
 }
 
 .hostile-side {
@@ -257,25 +260,33 @@
     display: flex;
     flex-direction: column-reverse;
     width: 100%;
-    justify-content: space-between;
+}
+
+.hostile-side>.lands {
+    border-top: none;
+}
+
+.hostile-side>.field {
+    height: 70%;
 }
 
 .field {
+    box-sizing: border-box;
     color: black;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    height: fit-content;
+    height: 40%;
     width: 100%;
-    margin-bottom: auto;
 }
 
 .lands {
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    min-height: 20%;
-    height: fit-content;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    height: 30%;
     width: 100%;
     border-style: solid;
     border-left: none;
@@ -286,16 +297,15 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    overflow-x: scroll;
     justify-content: center;
-    height: fit-content;
-    min-height: 20%;
+    height: 30%;
     width: 100%;
 }
 
 .card {
     cursor: pointer;
     width: auto;
-    max-height: 20em;
     margin-left: 5px;
     margin-right: 20px;
     margin-bottom: auto;
@@ -310,10 +320,6 @@
 
 .lands>.card {
     height: 90%;
-}
-
-.hand>.card {
-    margin: auto;
 }
 
 .card:hover {

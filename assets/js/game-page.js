@@ -298,9 +298,9 @@ function stateUpdate(data) {
                     instance.setAttribute("data-instance-id", change.instanceID)
                     instance.classList.add("card")
                     if (change.data.zone == "field" && change.data.types.includes("Type.LAND")) {
-                        document.querySelector(".lands", "[data-owned-by=" + change.data.controller + "]").appendChild(instance)
+                        document.querySelector(".lands[data-owned-by=" + change.data.controller + "]").appendChild(instance)
                     } else {
-                        document.querySelector("." + change.data.zone, "[data-owned-by=" + change.data.controller + "]").appendChild(instance)
+                        document.querySelector("." + change.data.zone + "[data-owned-by=" + change.data.controller + "]").appendChild(instance)
                     }
 
                     findCardByID(change.data.oracle, (err, card) => {
