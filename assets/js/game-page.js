@@ -307,44 +307,59 @@ function stateUpdate(data) {
                         instance.src = card.image_uris.normal
                     })
 
-                    var abilityPrompt = document.createElement('div')
-                    abilityPrompt.classList.add("promptable")
-
-                    var hdr = document.createElement('div')
-                    hdr.classList.add("prompt-hdr")
-                    hdr.appendChild(document.createTextNode("Abilites"))
-                    abilityPrompt.append(hdr)
-
-                    if (change.data.abilities.length != 0) {
-                        for (const index in change.data.abilities) {
-                            var ability = document.createElement('div')
-                            ability.classList.add("ability")
-                            ability.setAttribute("data-ability-id", change.data.abilities[index][0])
-                            ability.appendChild(document.createTextNode(change.data.abilities[index][1]))
-                            abilityPrompt.appendChild(ability)
-                            ability.addEventListener('dblclick', (e) => {
-                                var msg = {
-                                    "type": "Activate Ability",
-                                    "data": {
-                                        "gameID": currGameID,
-                                        "playerID": currPlayerID,
-                                        "abilityID": e.srcElement.getAttribute("data-ability-id"),
-                                    }
+                    if (change.data.types.includes("Supertype.BASIC") && change.data.zone == "field") {
+                        instance.setAttribute("data-mana-ability-id", change.data.abilities[0][0])
+                        instance.addEventListener("dblclick", (e) => {
+                            var msg = {
+                                "type": "Activate Ability",
+                                "data": {
+                                    "gameID": currGameID,
+                                    "playerID": currPlayerID,
+                                    "abilityID": e.srcElement.getAttribute("data-mana-ability-id"),
                                 }
-                                serverConn.send(JSON.stringify(msg))
-                                closePrompt(null)
+                            }
+                            serverConn.send(JSON.stringify(msg))
+                        })
+                    } else {
+                        var abilityPrompt = document.createElement('div')
+                        abilityPrompt.classList.add("promptable")
+
+                        var hdr = document.createElement('div')
+                        hdr.classList.add("prompt-hdr")
+                        hdr.appendChild(document.createTextNode("Abilites"))
+                        abilityPrompt.append(hdr)
+
+                        if (change.data.abilities.length != 0) {
+                            for (const index in change.data.abilities) {
+                                var ability = document.createElement('div')
+                                ability.classList.add("ability")
+                                ability.setAttribute("data-ability-id", change.data.abilities[index][0])
+                                ability.appendChild(document.createTextNode(change.data.abilities[index][1]))
+                                abilityPrompt.appendChild(ability)
+                                ability.addEventListener('dblclick', (e) => {
+                                    var msg = {
+                                        "type": "Activate Ability",
+                                        "data": {
+                                            "gameID": currGameID,
+                                            "playerID": currPlayerID,
+                                            "abilityID": e.srcElement.getAttribute("data-ability-id")
+                                        }
+                                    }
+                                    serverConn.send(JSON.stringify(msg))
+                                    closePrompt(null)
+                                })
+                            }
+                            gamePage.appendChild(abilityPrompt)
+                            instance.addEventListener('dblclick', (e) => {
+                                gameBoard.style.filter = "blur(5px)"
+                                abilityPrompt.style.display = "flex"
+                                currPrompt = abilityPrompt
+                                blurred = gameBoard
+                                window.setTimeout(function() {
+                                    abilityPrompt.classList.add("prompt")
+                                }, 100);
                             })
                         }
-                        gamePage.appendChild(abilityPrompt)
-                        instance.addEventListener('dblclick', (e) => {
-                            gameBoard.style.filter = "blur(5px)"
-                            abilityPrompt.style.display = "flex"
-                            currPrompt = abilityPrompt
-                            blurred = gameBoard
-                            window.setTimeout(function() {
-                                abilityPrompt.classList.add("prompt")
-                            }, 100);
-                        })
                     }
                     if (change.data.zone == "hand") {
                         instance.draggable = "true"
