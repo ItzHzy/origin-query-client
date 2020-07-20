@@ -1,5 +1,3 @@
-export { findCardByID, findCardsByQuery, findCardsByNameQuery }
-
 const fs = require('fs')
 const path = require('path')
 
@@ -20,3 +18,5 @@ function findCardsByNameQuery(query, callback) {
 function findCardsByQuery(query, callback) {
 
 }
+
+export { findCardByID, findCardsByQuery, findCardsByNameQuery }

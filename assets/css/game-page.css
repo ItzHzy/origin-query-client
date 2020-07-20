@@ -12,159 +12,6 @@
     font-size: xx-large;
 }
 
-#lobby {
-    display: none;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-}
-
-#lobby__header {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    font-weight: bold;
-    font-size: xx-large;
-    height: 60px;
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#lobby__choose-deck-btn {
-    color: black;
-    background-color: lightgreen;
-    font-weight: bold;
-    width: 100px;
-    height: 30px;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 5px;
-    border: none;
-    border-radius: 3px;
-    outline: none;
-}
-
-#lobby__choose-deck-btn:hover {
-    cursor: pointer;
-    background-color: green;
-}
-
-#lobby__ready-btn {
-    display: none;
-    color: black;
-    background-color: lightgreen;
-    font-weight: bold;
-    width: 100px;
-    height: 30px;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 5px;
-    border: none;
-    border-radius: 3px;
-    outline: none;
-}
-
-#lobby__ready-btn:hover {
-    cursor: pointer;
-    background-color: green;
-}
-
-#lobby__not-ready-btn {
-    display: none;
-    color: black;
-    background-color: lightcoral;
-    font-weight: bold;
-    width: 100px;
-    height: 30px;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 5px;
-    border: none;
-    border-radius: 3px;
-    outline: none;
-}
-
-#lobby__not-ready-btn:hover {
-    cursor: pointer;
-    background-color: red;
-}
-
-#lobby__div {
-    display: flex;
-    flex-direction: row;
-    margin: auto;
-    height: 100%;
-    width: 98%;
-    justify-content: space-evenly;
-}
-
-#lobby__deck-list {
-    height: 98%;
-    width: 30%;
-    min-width: fit-content;
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
-    border-radius: 5px;
-}
-
-.lobby__deck-list--entry {
-    font-weight: bold;
-    width: 98%;
-    padding: 1%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    border-radius: 5px;
-}
-
-.lobby__deck-list--entry:hover {
-    background-color: lightgray;
-    cursor: pointer;
-}
-
-#lobby__enhanced-card-img {
-    height: 100%;
-    width: 30%;
-}
-
-#lobby__player-list {
-    height: fit-content;
-    width: 30%;
-    border-color: black;
-    border-style: solid;
-    border-width: 1px;
-}
-
-.lobby__player-list--entry {
-    display: flex;
-    flex-direction: row;
-    padding-left: 1%;
-    height: fit-content;
-    width: 100%;
-}
-
-.lobby__player-list--name {
-    height: fit-content;
-    width: 75%;
-    font-weight: bold;
-}
-
-.lobby__player-list--status--not-ready {
-    color: red;
-    height: fit-content;
-    width: 25%;
-    font-weight: bold;
-}
-
-.lobby__player-list--status--ready {
-    color: lightgreen;
-    height: fit-content;
-    width: 25%;
-    font-weight: bold;
-}
-
 #game-board {
     box-sizing: border-box;
     color: black;
@@ -173,7 +20,7 @@
     border: solid;
     border-radius: 3px;
     height: 100%;
-    width: 100%;
+    width: 90%;
 }
 
 .board-side {
@@ -185,74 +32,12 @@
     border-style: solid;
 }
 
-.player-profile {
-    box-sizing: border-box;
-    color: black;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 300px;
-    border-style: solid;
-    border-top: none;
-    border-bottom: none;
-}
-
-.player-profile__pfp {
-    overflow-y: hidden;
-    overflow-x: hidden;
-    height: 100px;
-    width: 100px;
-    border-style: solid;
-    border-radius: 50%;
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 0px;
-}
-
-.player-profile__name {
-    height: fit-content;
-    width: fit-content;
-    max-width: 80%;
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    color: black;
-    font-weight: bold;
-    font-size: xx-large;
-}
-
-.player-profile__counts {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    width: 100%;
-    height: fit-content;
-    margin-top: 10px;
-}
-
-.player-profile__count {
-    display: flex;
-    flex-direction: row;
-    width: 25%;
-    height: 30px;
-}
-
-.player-profile__count--icon {
-    height: 100%;
-}
-
-.player-profile__count--num {
-    width: 40%;
-    margin: auto;
-    margin-right: 0px;
-    font-size: xx-large;
-}
-
 .friendly-side {
     color: black;
     display: flex;
     flex-direction: column;
     width: 100%;
+    overflow-x: scroll;
 }
 
 .hostile-side {
@@ -268,6 +53,16 @@
 
 .hostile-side>.field {
     height: 70%;
+}
+
+#stack {
+    color: black;
+    display: none;
+    box-sizing: border-box;
+    width: 10%;
+    height: 100%;
+    border: 5px solid;
+    border-radius: 3px;
 }
 
 .field {
@@ -290,6 +85,7 @@
     width: 100%;
     border-style: solid;
     border-left: none;
+    border-right: none;
 }
 
 .hand {
@@ -297,8 +93,8 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    overflow-x: scroll;
-    justify-content: center;
+    overflow-x: hidden;
+    justify-content: space-evenly;
     height: 30%;
     width: 100%;
 }
@@ -310,12 +106,19 @@
     margin-right: 20px;
     margin-bottom: auto;
     margin-top: auto;
-    border-radius: 9px;
+    border-radius: 11px;
     transition-duration: 0.25s;
 }
 
 .hand>.card {
     height: 90%;
+    margin-right: -10%;
+    margin-left: -10%;
+}
+
+.hand>.card:hover {
+    position: relative;
+    z-index: 1000;
 }
 
 .lands>.card {

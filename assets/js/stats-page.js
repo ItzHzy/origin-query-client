@@ -1,3 +1,6 @@
+/**
+ * Graph of the currently viewed deck sorted by Converted Mana Cost
+ */
 var cmcChart = new Chart(document.getElementById("cmcChart"), {
     type: 'bar',
     data: {

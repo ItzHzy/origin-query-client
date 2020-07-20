@@ -8,7 +8,6 @@ body {
     background-color: #2b363d;
     display: flex;
     flex-direction: row;
-    overflow-y: hidden;
     font-family: 'Roboto';
     user-select: none;
 }
@@ -32,6 +31,7 @@ body {
     border-radius: 10px;
     background-color: #aaa9a9;
     background-color: rgb(66, 66, 66);
+    overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {

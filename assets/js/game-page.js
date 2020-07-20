@@ -1,30 +1,20 @@
-import { changeToGameActivity } from './tabs.js'
+import { goToPage } from './nav.js'
 import { findCardByID } from './database.js'
 import { serverConn } from './server-page.js'
-export { joinGame, ready, notReady, startGame, stateUpdate, lobby__readyBtn }
 
 const { dialog } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
 
-const lobby = document.getElementById("lobby")
-const lobby__chooseDeckBtn = document.getElementById("lobby__choose-deck-btn")
 const lobby__readyBtn = document.getElementById('lobby__ready-btn')
-const lobby__notReadyBtn = document.getElementById('lobby__not-ready-btn')
-const lobby__playerList = document.getElementById("lobby__player-list")
-const lobby__decklist = document.getElementById("lobby__deck-list")
-const lobby__enhancedCardImg = document.getElementById("lobby__enhanced-card-img")
-const failedGameMSG = document.getElementById("failed-game-MSG")
-const gameBoard = document.getElementById('game-board')
-const gamePage = document.getElementById("game-page")
 
-var currGameID;
-var currPlayerID;
-var currPrompt;
-var blurred;
+var currGameID
+var currPlayerID
+var currPrompt
+var blurred
 
-lobby__chooseDeckBtn.addEventListener('click', chooseDeck)
-lobby__readyBtn.addEventListener('click', () => {
+document.getElementById("lobby__choose-deck-btn").addEventListener('click', chooseDeck)
+lobby__readyBtn.addEventListener('click', (event) => {
     var msg = {
         "type": "Ready",
         "data": {
@@ -34,7 +24,7 @@ lobby__readyBtn.addEventListener('click', () => {
     }
     serverConn.send(JSON.stringify(msg))
 })
-lobby__notReadyBtn.addEventListener('click', () => {
+document.getElementById('lobby__not-ready-btn').addEventListener('click', () => {
     var msg = {
         "type": "Not Ready",
         "data": {
@@ -45,7 +35,7 @@ lobby__notReadyBtn.addEventListener('click', () => {
     serverConn.send(JSON.stringify(msg))
 })
 
-gameBoard.addEventListener('click', closePrompt)
+document.getElementById('game-board').addEventListener('click', closePrompt)
 
 function closePrompt(e) {
     if (currPrompt != undefined && currPrompt != null) {
@@ -56,9 +46,9 @@ function closePrompt(e) {
 }
 
 function joinGame(data) {
-    lobby__playerList.innerHTML = ""
-    failedGameMSG.style.display = "none"
-    lobby.style.display = "flex"
+    document.getElementById("lobby__player-list").innerHTML = ""
+    document.getElementById("failed-game-MSG").style.display = "none"
+    document.getElementById("lobby").style.display = "flex"
 
     currGameID = data.gameID
     if (currPlayerID == undefined) {
@@ -82,9 +72,9 @@ function joinGame(data) {
 
         entry.setAttribute('data-player-id', data.players[index][1])
 
-        lobby__playerList.appendChild(entry)
+        document.getElementById("lobby__player-list").appendChild(entry)
     }
-    changeToGameActivity()
+    goToPage("game-page")
 }
 
 function chooseDeck() {
@@ -107,13 +97,13 @@ function chooseDeck() {
             entry.appendChild(document.createElement('div'))
             entry.appendChild(document.createTextNode('x' + data[id]))
             entry.addEventListener('click', (e) => {
-                lobby__enhancedCardImg.innerHTML = ""
+                document.getElementById("lobby__enhanced-card-img").innerHTML = ""
                 var img = document.createElement('img')
                 img.src = e.srcElement.getAttribute('data-img-source')
                 img.className = 'enhanced-image'
-                lobby__enhancedCardImg.appendChild(img)
+                document.getElementById("lobby__enhanced-card-img").appendChild(img)
             })
-            lobby__decklist.appendChild(entry)
+            document.getElementById("lobby__deck-list").appendChild(entry)
         })
     }
 
@@ -132,7 +122,7 @@ function chooseDeck() {
 function ready(data) {
     if (data.playerID == currPlayerID) {
         lobby__readyBtn.style.display = "none"
-        lobby__notReadyBtn.style.display = "block"
+        document.getElementById('lobby__not-ready-btn').style.display = "block"
     }
 
     var entry = document.querySelectorAll("[data-player-id=" + data.playerID + "]")[0]
@@ -146,7 +136,7 @@ function ready(data) {
 
 function notReady(data) {
     lobby__readyBtn.style.display = "block"
-    lobby__notReadyBtn.style.display = "none"
+    document.getElementById('lobby__not-ready-btn').style.display = "none"
 
     var entry = document.querySelectorAll("[data-player-id=\"" + data.playerID + "\"]")[0]
     entry.removeChild(entry.lastChild)
@@ -158,23 +148,25 @@ function notReady(data) {
 }
 
 function startGame(data) {
-    var started = false;
-    var finished = false;
-    var height;
+    const gameBoard = document.getElementById('game-board')
 
-    switch (data.numPlayers) {
-        case 1:
-            height = "height-100"
-            break
-        case 2:
-            height = "height-50"
-            break
-        case 3:
-            height = "height-33"
-            break
-        case 4:
-            height = "height-25"
+    var started = false
+    var finished = false
+    var height
+
+    if (data.numPlayers == 1) {
+        height = "height-100"
     }
+    if (data.numPlayers == 2) {
+        height = "height-50"
+    }
+    if (data.numPlayers == 3) {
+        height = "height-33"
+    }
+    if (data.numPlayers == 4) {
+        height = "height-25"
+    }
+
 
     for (const index in data.players) {
         if (data.players[index][0] == currPlayerID) {
@@ -183,24 +175,15 @@ function startGame(data) {
             var side = document.getElementById("board-side-friendly-template").cloneNode(true)
             side.style.display = "flex"
             side.classList.add(height)
+            side.querySelector(".friendly-side").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
+            var question = document.createElement("p")
+            question.classList.add("question")
+            side.querySelector(".player-profile").appendChild(question)
             side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".hand").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
-
             side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
-            side.querySelectorAll(".player-profile__count--num")[0].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[1].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[2].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[3].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[4].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[5].appendChild(document.createTextNode("0"))
-
-            if (data.players[index][4] == null) {
-                // pic.src = "assets/icons/default-pfp.svg"
-            } else {
-                // pic.src = "assets/icons/default-pfp.svg"
-            }
 
             side.querySelector(".lands").addEventListener('dragenter', (e) => { e.preventDefault() })
             side.querySelector(".lands").addEventListener('dragover', (e) => { e.preventDefault() })
@@ -224,23 +207,12 @@ function startGame(data) {
             var side = document.getElementById("board-side-hostile-template").cloneNode(true)
             side.style.display = "flex"
             side.classList.add(height)
+            side.querySelector(".hostile-side").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
 
             side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
-            side.querySelectorAll(".player-profile__count--num")[0].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[1].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[2].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[3].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[4].appendChild(document.createTextNode("0"))
-            side.querySelectorAll(".player-profile__count--num")[5].appendChild(document.createTextNode("0"))
-
-            if (data.players[index][4] == null) {
-                // pic.src = "assets/icons/default-pfp.svg"
-            } else {
-                // pic.src = "assets/icons/default-pfp.svg"
-            }
 
             gameBoard.appendChild(side)
         }
@@ -255,35 +227,27 @@ function startGame(data) {
                 var side = document.getElementById("board-side-hostile-template").cloneNode(true)
                 side.style.display = "flex"
                 side.classList.add(height)
+                side.querySelector(".hostile-side").setAttribute('data-owned-by', data.players[index][0])
                 side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
                 side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
                 side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
 
                 side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
-                side.querySelectorAll(".player-profile__count--num")[0].appendChild(document.createTextNode("0"))
-                side.querySelectorAll(".player-profile__count--num")[1].appendChild(document.createTextNode("0"))
-                side.querySelectorAll(".player-profile__count--num")[2].appendChild(document.createTextNode("0"))
-                side.querySelectorAll(".player-profile__count--num")[3].appendChild(document.createTextNode("0"))
-                side.querySelectorAll(".player-profile__count--num")[4].appendChild(document.createTextNode("0"))
-                side.querySelectorAll(".player-profile__count--num")[5].appendChild(document.createTextNode("0"))
-
-                if (data.players[index][4] == null) {
-                    // pic.src = "assets/icons/default-pfp.svg"
-                } else {
-                    // pic.src = "assets/icons/default-pfp.svg"
-                }
 
                 gameBoard.appendChild(side)
             }
         }
     }
 
-    lobby.style.display = "none";
-    gameBoard.style.display = "flex";
+    document.getElementById("lobby").style.display = "none"
+    gameBoard.style.display = "flex"
+    document.getElementById("stack").style.display = "flex"
+
 }
 
 function stateUpdate(data) {
-    // Card Updates
+    const gameBoard = document.getElementById('game-board')
+        // Card Updates
     for (const index in data.cards) {
         var change = data.cards[index]
         switch (data.cards[index].type) {
@@ -349,7 +313,7 @@ function stateUpdate(data) {
                                     closePrompt(null)
                                 })
                             }
-                            gamePage.appendChild(abilityPrompt)
+                            document.getElementById("game-page").appendChild(abilityPrompt)
                             instance.addEventListener('dblclick', (e) => {
                                 gameBoard.style.filter = "blur(5px)"
                                 abilityPrompt.style.display = "flex"
@@ -357,7 +321,7 @@ function stateUpdate(data) {
                                 blurred = gameBoard
                                 window.setTimeout(function() {
                                     abilityPrompt.classList.add("prompt")
-                                }, 100);
+                                }, 100)
                             })
                         }
                     }
@@ -370,13 +334,13 @@ function stateUpdate(data) {
                         instance.draggable = "false"
                     }
                 }
-                break;
+                break
             case "Tap":
                 var card = document.querySelector("[data-instance-id=" + change.instanceID + "]")
                 if (card != null) {
                     card.classList.add("tapped")
                 }
-                break;
+                break
         }
     }
 
@@ -385,24 +349,101 @@ function stateUpdate(data) {
         var change = data.players[index]
         switch (change.type) {
             case "Zone Count Update":
-                var zone;
-                switch (change.data.type) {
-                    case "Hand":
-                        zone = 1
-                        break;
-                    case "Deck":
-                        zone = 5
-                        break;
-                }
-                var count = document.querySelectorAll('[data-owned-by=' + change.playerID + '] > .player-profile__counts > .player-profile__count > .player-profile__count--num')[zone]
+                var zoneIndex = { "Hand": 1, "Deck": 5 }
+                var count = document.querySelectorAll('[data-owned-by=' + change.playerID + '] > .player-profile__counts > .player-profile__count > .player-profile__count--num')[zoneIndex[change.data.type]]
                 count.removeChild(count.lastChild)
                 count.appendChild(document.createTextNode(change.data.num))
-                break;
+                break
             case "Mana Update":
                 var count = document.querySelectorAll('[data-owned-by=' + change.playerID + '] > .player-profile__counts > .player-profile__count > .player-profile__count--num')[0]
                 count.removeChild(count.lastChild)
                 count.appendChild(document.createTextNode(change.data.num))
-                break;
+                break
         }
     }
 }
+
+function startTurn(data) {
+    document.querySelectorAll(".friendly-side", ".hostile-side").forEach((side) => {
+        if (data.playerID == side.getAttribute("data-owned-by")) {
+            side.style.boxShadow = "inset 0 0 0 1px white"
+        } else {
+            side.style.boxShadow = ""
+        }
+    })
+}
+
+function choose(data) {
+    switch (data.type) {
+        case "InquiryType.BOOLEAN":
+            profile = document.querySelector("#board-side-friendly-template .player-profile")
+            var inquiry = document.createElement("p")
+            inquiry.classList.add("question")
+            inquiry.appendChild(document.createTextNode(data.inquiry[0]))
+            var answer = document.createElement("div")
+            answer.classList.add("answer")
+
+            var yes = document.createElement("button")
+            var no = document.createElement("button")
+            yes.appendChild(document.createTextNode("Yes"))
+            no.appendChild(document.createTextNode("No"))
+
+            profile.appendChild(inquiry)
+            profile.appendChild(answer)
+            answer.appendChild(yes)
+            answer.appendChild(no)
+
+            yes.addEventListener('click', (e) => {
+                profile = document.querySelector("#board-side-friendly-template .player-profile")
+                profile.removeChild(profile.lastChild)
+                profile.removeChild(profile.lastChild)
+                var msg = {
+                    "type": "Choose",
+                    "answer": true
+                }
+                serverConn.send(JSON.stringify(msg))
+            })
+            no.addEventListener('click', (e) => {
+                profile = document.querySelector("#board-side-friendly-template .player-profile")
+                profile.removeChild(profile.lastChild)
+                profile.removeChild(profile.lastChild)
+                var msg = {
+                    "type": "Choose",
+                    "answer": false
+                }
+                serverConn.send(JSON.stringify(msg))
+            })
+            break
+
+        default:
+            break
+    }
+}
+
+
+document.getElementById("lobby__choose-deck-btn").addEventListener('click', chooseDeck)
+document.getElementById('game-board').addEventListener('click', closePrompt)
+
+lobby__readyBtn.addEventListener('click', (event) => {
+    var msg = {
+        "type": "Ready",
+        "data": {
+            "gameID": currGameID,
+            "playerID": currPlayerID
+        }
+    }
+    serverConn.send(JSON.stringify(msg))
+})
+
+document.getElementById('lobby__not-ready-btn').addEventListener('click', () => {
+    var msg = {
+        "type": "Not Ready",
+        "data": {
+            "gameID": currGameID,
+            "playerID": currPlayerID
+        }
+    }
+    serverConn.send(JSON.stringify(msg))
+})
+
+export { joinGame, ready, notReady, startGame, stateUpdate, lobby__readyBtn }

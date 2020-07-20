@@ -1,43 +1,11 @@
-const WebSocket = require('ws');
+const WebSocket = require('ws')
 import { settings, writeToConfig } from './config.js'
 import { joinGame, ready, notReady, startGame, lobby__readyBtn } from './game-page.js'
 import { stateUpdate } from './game-page.js'
-export { serverConn, cancelGameCreation }
 
-const menu = document.getElementById("serverMenu")
-const gameListings = document.getElementById("gameListings")
-
-const createGamePromptButton = document.getElementById("createGamePromptButton")
-const createGamePrompt = document.getElementById("createGamePrompt")
-const cancelCreationButton = document.getElementById("cancelCreationButton")
-const createGameButton = document.getElementById("createGameButton")
-
-const loginPrompt = document.getElementById('login-prompt')
-const loginBtn = document.getElementById('login-btn')
-
-const title = document.forms["createGame"]["title"]
-const numPlayers = document.forms["numPlayersChosen"]["num"]
-var games = {}
-var playerName;
-var serverConn;
+var playerName
+var serverConn
 var loginFailedOnce = false
-
-createGamePromptButton.addEventListener('click', gameCreationPrompt)
-cancelCreationButton.addEventListener('click', cancelGameCreation)
-createGameButton.addEventListener('click', createGame)
-loginBtn.addEventListener('click', loginRequest)
-document.getElementById('remember-me').addEventListener('click', (e) => {
-    if (e.srcElement.checked) {
-        settings.username = document.forms["username"]["username-entry"].value
-        settings.pass = document.forms["password"]["password-entry"].value
-        settings.serverAddr = document.forms["server"]["server-entry"].value
-        settings.rememberMe = true
-        writeToConfig()
-    } else {
-        settings.rememberMe = false
-        writeToConfig()
-    }
-})
 
 if (settings.rememberMe == true) {
     document.forms["username"]["username-entry"].value = settings.username
@@ -47,13 +15,18 @@ if (settings.rememberMe == true) {
 }
 
 
+/**
+ * Connects to specified server and sends a login request. 
+ * Server will respond with a "Login Successful" message if successful,
+ * otherwise it will send a "Login Failed" message.
+ */
 function loginRequest() {
     var user = document.forms["username"]["username-entry"].value
     playerName = user
     var pass = document.forms["password"]["password-entry"].value
     var address = document.forms["server"]["server-entry"].value
     try {
-        serverConn = new WebSocket("ws://" + address + ":2129", { perMessageDeflate: true });
+        serverConn = new WebSocket("ws://" + address + ":2129", { perMessageDeflate: true })
 
         var msg = {
             "user": user,
@@ -64,50 +37,76 @@ function loginRequest() {
             serverConn.send(JSON.stringify(msg))
         })
         serverConn.on('message', msg_handler)
-        serverConn.on('close', closed)
+        serverConn.on('close', (event) => { document.getElementById("serverMenu").style.display = "none" })
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 }
 
+
+/**
+ * Handles "Login Success" messages.
+ * Closes login prompt and sends a "Show Games" message to the server.
+ * Server will respond with an array of currently listed games.
+ */
 function loginSuccess() {
-    loginPrompt.classList.remove("prompt")
-    menu.style.display = "flex";
+    document.getElementById('login-prompt').classList.remove("prompt")
+    document.getElementById("serverMenu").style.display = "flex"
     serverConn.send(JSON.stringify({ "type": "Show Games" }))
 }
 
+
+/**
+ * Handles "Login Failed" messages.
+ * Adds error message to bottom of login prompt.
+ */
 function loginFailed() {
     if (!loginFailedOnce) {
         var errorMsg = document.createElement('div')
-        errorMsg.style = "margin-left: auto;margin-right: auto;height: fit-content;width: fit-content;color: #a83236;font-weight: bolder;font-size: large;margin-bottom: 15px;"
+        errorMsg.style = "margin-left: automargin-right: autoheight: fit-contentwidth: fit-contentcolor: #a83236font-weight: bolderfont-size: largemargin-bottom: 15px"
         errorMsg.appendChild(document.createTextNode("Username or Password is Incorrect!"))
-        loginPrompt.appendChild(errorMsg)
+        document.getElementById('login-prompt').appendChild(errorMsg)
     }
 }
 
-function gameCreationPrompt(e) {
-    menu.style.filter = "blur(5px)"
-    createGamePrompt.style.display = "flex"
 
+/**
+ * Opens game creation prompt.
+ * @param {MouseEvent} event
+ */
+function gameCreationPrompt(event) {
+    document.getElementById("serverMenu").style.filter = "blur(5px)"
+    document.getElementById("createGamePrompt").style.display = "flex"
+
+    // timeouts before opening so that styles can update
     window.setTimeout(function() {
-        createGamePrompt.classList.add("prompt")
-    }, 100);
+        document.getElementById("createGamePrompt").classList.add("prompt")
+    }, 100)
 }
 
+/**
+ * Closes game creation prompt.
+ */
 function cancelGameCreation() {
-    createGamePrompt.classList.remove("prompt")
-    menu.style.filter = ""
-    title.value = ""
-    numPlayers.value = ""
+    document.getElementById("createGamePrompt").classList.remove("prompt")
+    document.getElementById("serverMenu").style.filter = ""
+    document.forms["createGame"]["title"].value = ""
+    document.forms["numPlayersChosen"]["num"].value = ""
 }
 
-function createGame(e) {
-    if (title.value != "" && numPlayers.value != "") {
+
+/**
+ * Sends the details of the game to the server.
+ * Server will respond with a "Create Game" message if successful
+ * @param {MouseEvent} event
+ */
+function createGame(event) {
+    if (document.forms["createGame"]["title"].value != "" && document.forms["numPlayersChosen"]["num"].value != "") {
         var msg = {
             type: "Create Game",
             data: {
-                "title": title.value,
-                "numPlayers": numPlayers.value
+                "title": document.forms["createGame"]["title"].value,
+                "numPlayers": document.forms["numPlayersChosen"]["num"].value
             }
         }
         serverConn.send(JSON.stringify(msg))
@@ -115,8 +114,13 @@ function createGame(e) {
     cancelGameCreation()
 }
 
+/**
+ * Handles "Create Game" messages.
+ * Updates current game listings on client
+ * @param {Object} data 
+ */
 function gameCreated(data) {
-    gameListings.style.border = "solid black"
+    document.getElementById("gameListings").style.border = "solid black"
     var gameListing = document.createElement("div")
     gameListing.className = "server__game-listing"
     gameListing.setAttribute('data-game-id', data.gameID)
@@ -146,11 +150,16 @@ function gameCreated(data) {
     gameListing.appendChild(gameListing_status)
 
     gameListing.addEventListener('dblclick', joinGameButton)
-    gameListings.appendChild(gameListing)
+    document.getElementById("gameListings").appendChild(gameListing)
 }
 
+/**
+ * Sends a "Join Game" message to the server with the game id
+ * Server will respond with a "Join Game" message if successful
+ * @param {MouseEvent|Object} data 
+ */
 function joinGameButton(data) {
-    var game_id;
+    var game_id
 
     if (data instanceof MouseEvent) {
         game_id = data.srcElement.getAttribute('data-game-id')
@@ -167,11 +176,16 @@ function joinGameButton(data) {
     serverConn.send(JSON.stringify(msg))
 }
 
+/**
+ * Handles "Show Games" messages.
+ * Populates client with all current games on server 
+ * @param {Object} data 
+ */
 function showGames(data) {
     if (data.length != 0) {
         for (const index in data) {
             var game = data[index]
-            gameListings.style.border = "solid black"
+            document.getElementById("gameListings").style.border = "solid black"
             var gameListing = document.createElement("div")
             gameListing.className = "server__game-listing"
             gameListing.setAttribute('data-game-id', game.gameID)
@@ -201,19 +215,32 @@ function showGames(data) {
             gameListing.appendChild(gameListing_status)
 
             gameListing.addEventListener('dblclick', joinGameButton)
-            gameListings.appendChild(gameListing)
+            document.getElementById("gameListings").appendChild(gameListing)
         }
     }
 }
 
-function sortGames() {}
 
-function closed() {
-    menu.style.display = "none";
-}
-
+/**
+ *  Main message handler.
+ *  Will break off to different code branchs depending on the data 
+ * @param {{type: string, class: string, data: any}} data 
+ */
 function msg_handler(data) {
     var msg = JSON.parse(data)
+    if (msg.class == "Server") {
+        server_msg_handler(msg)
+    }
+    if (msg.class == "Game") {
+        game_msg_handler(msg)
+    }
+}
+
+/**
+ * Handles messages relating to the server in general
+ * @param {Object} msg 
+ */
+function server_msg_handler(msg) {
     switch (msg.type) {
         case "Login":
             if (msg.result == "Success") {
@@ -221,44 +248,87 @@ function msg_handler(data) {
             } else {
                 loginFailed()
             }
-            break;
+            break
 
         case "Show Games":
             showGames(msg.data)
-            break;
+            break
 
         case "Create Game":
             gameCreated(msg.data)
             if (playerName == msg.data.creator) {
                 joinGameButton(msg.data)
             }
-            break;
+            break
 
         case "Join Game":
             joinGame(msg.data)
-            break;
+            break
 
         case "Ready":
             ready(msg.data)
-            break;
+            break
 
         case "Not Ready":
             notReady(msg.data)
-            break;
+            break
 
         case "Choose Deck":
             lobby__readyBtn.style.display = "block"
-            break;
+            break
 
         case "Start Game":
             startGame(msg.data)
-            break;
+            break
 
         case "State Update":
             stateUpdate(msg.data)
-            break;
+            break
+
+        case "Choose":
+
+            break
+        default:
+            console.log(`Received malformed message: ${JSON.stringify(msg)}`)
+    }
+}
+
+/**
+ * Handles messages relating to currently running games joined by the client
+ * @param {Object} msg 
+ */
+function game_msg_handler(msg) {
+    switch (msg.type) {
+
+        case "State Update":
+            stateUpdate(msg.data)
+            break
+
+        case "Choose":
+            break
 
         default:
             console.log(`Received malformed message: ${JSON.stringify(msg)}`)
     }
 }
+
+document.getElementById("createGamePromptButton").addEventListener('click', gameCreationPrompt)
+document.getElementById("cancelCreationButton").addEventListener('click', cancelGameCreation)
+document.getElementById("createGameButton").addEventListener('click', createGame)
+document.getElementById('login-btn').addEventListener('click', loginRequest)
+
+// Enables remembering credential on the login prompt
+document.getElementById('remember-me').addEventListener('click', (e) => {
+    if (e.srcElement.checked) {
+        settings.username = document.forms["username"]["username-entry"].value
+        settings.pass = document.forms["password"]["password-entry"].value
+        settings.serverAddr = document.forms["server"]["server-entry"].value
+        settings.rememberMe = true
+        writeToConfig()
+    } else {
+        settings.rememberMe = false
+        writeToConfig()
+    }
+})
+
+export { serverConn, cancelGameCreation }

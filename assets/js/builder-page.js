@@ -5,65 +5,26 @@ const { dialog } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
 
-const c1 = document.getElementById("c1")
-const input = document.getElementById("searchBar")
-const searchResults = document.getElementById("searchResults")
-const c2 = document.getElementById("c2")
-const plus1 = document.getElementById('plus-1')
-const minus1 = document.getElementById('minus-1')
-const deckList = document.getElementById("deckList")
-const c3 = document.getElementById("c3")
-const clearButton = document.getElementById("clearDeck")
-const saveButton = document.getElementById("saveDeck")
-const loadButton = document.getElementById("loadDeck")
+var currDeck = {} // holds the currently viewed deck
+var totalCards = 0 // total number of cards in currenly viewed deck 
+var deckName; // name of the currently viewed deck
+var selectedEntry; // currently selected card in decklist
 
-
-input.addEventListener('input', findResults)
-plus1.addEventListener('click', (e) => {
-    if (selectedEntry != undefined) {
-        var id = selectedEntry.id
-        currDeck[id] += 1
-        selectedEntry.removeChild(selectedEntry.lastChild)
-        selectedEntry.appendChild(document.createTextNode('x' + currDeck[id]))
-        cmcChart.data.datasets[0].data[card.cmc] -= 1
-        cmcChart.update()
-    }
-})
-minus1.addEventListener('click', (e) => {
-    if (selectedEntry != undefined) {
-        var id = selectedEntry.id
-
-        if (currDeck[id] == 1) {
-            deckList.removeChild(selectedEntry)
-            delete currDeck[id]
-        } else {
-            currDeck[id] -= 1
-            selectedEntry.removeChild(selectedEntry.lastChild)
-            selectedEntry.appendChild(document.createTextNode('x' + currDeck[id]))
-        }
-        cmcChart.data.datasets[0].data[card.cmc] -= 1
-        cmcChart.update()
-    }
-})
-clearButton.addEventListener('click', (e) => { deckList.innerHTML = '' })
-loadButton.addEventListener('click', loadDeck)
-saveButton.addEventListener('click', saveDeck)
-c2.addEventListener('click', selectCard)
-
-
-
-var currDeck = {}
-var totalCards = 0
-var deckName;
-var selectedEntry;
-
-function findResults(e) {
-    searchResults.innerHTML = "";
+/**
+ * Finds all matching cards in database and populate the found results
+ * @param {Event} event
+ */
+function findResults(event) {
+    document.getElementById("searchResults").innerHTML = "";
     if (input.value.length >= 3) {
         findCardsByNameQuery(new RegExp(input.value, 'ig'), (err, cards) => { cards.forEach(populateResult) })
     }
 }
 
+/**
+ * Populates the found card object into the user's search results
+ * @param {Object} card 
+ */
 function populateResult(card) {
     var result = document.createElement("div")
     result.className = 'result'
@@ -73,15 +34,15 @@ function populateResult(card) {
     image.className = "result-thumbnail"
     image.src = card.image_uris.normal
     image.setAttribute('data-oracle-id', card.oracle_id)
-    image.addEventListener('mouseover', (e) => {
-        c3.innerHTML = ""
+    image.addEventListener('mouseover', (event) => {
+        document.getElementById("c3").innerHTML = ""
         var image = document.createElement("img")
-        image.src = e.srcElement.src
+        image.src = event.srcElement.src
         image.className = "enhanced-image"
-        c3.appendChild(image)
+        document.getElementById("c3").appendChild(image)
     })
     image.addEventListener('mouseout', (e) => {
-        c3.innerHTML = ""
+        document.getElementById("c3").innerHTML = ""
     })
 
     var cardText = document.createElement("div")
@@ -105,14 +66,18 @@ function populateResult(card) {
     cardText.appendChild(rulesText)
     result.appendChild(image)
     result.appendChild(cardText)
-    searchResults.appendChild(result)
-    searchResults.appendChild(line)
+    document.getElementById("searchResults").appendChild(result)
+    document.getElementById("searchResults").appendChild(line)
 
     result.addEventListener('click', addToDeck)
 }
 
-function addToDeck(e) {
-    var id = e.srcElement.getAttribute('data-oracle-id')
+/**
+ * Adds the selected card to the currently viewed deck
+ * @param {Event} event 
+ */
+function addToDeck(event) {
+    var id = event.srcElement.getAttribute('data-oracle-id')
 
     findCardByID(id, (err, card) => {
         var cardName = card.name
@@ -141,14 +106,14 @@ function addToDeck(e) {
             entry.className = "deckEntry"
             entry.id = id
             entry.setAttribute('data-img-src', card.image_uris.normal)
-            entry.addEventListener('click', (e) => {
-                c3.innerHTML = ""
+            entry.addEventListener('click', (event) => {
+                document.getElementById("c3").innerHTML = ""
                 var image = document.createElement("img")
-                image.src = e.srcElement.getAttribute('data-img-src')
+                image.src = event.srcElement.getAttribute('data-img-src')
                 image.className = "enhanced-image"
-                c3.appendChild(image)
+                document.getElementById("c3").appendChild(image)
             })
-            deckList.appendChild(entry)
+            document.getElementById("deckList").appendChild(entry)
 
         } else {
             entry = document.getElementById(id)
@@ -161,20 +126,24 @@ function addToDeck(e) {
             entry.appendChild(num)
 
             entry.setAttribute('data-img-src', card.image_uris.normal)
-            entry.addEventListener('click', (e) => {
-                c3.innerHTML = ""
+            entry.addEventListener('click', (event) => {
+                document.getElementById("c3").innerHTML = ""
                 var image = document.createElement("img")
-                image.src = e.srcElement.getAttribute('data-img-src')
+                image.src = event.srcElement.getAttribute('data-img-src')
                 image.className = "enhanced-image"
-                c3.appendChild(image)
+                document.getElementById("c3").appendChild(image)
             })
         }
 
     })
 }
 
-function loadDeck(e) {
-    deckList.innerHTML = ""
+/**
+ * Opens a dialog box to choose a deck and set it as the currently viewed deck
+ * @param {Event} event 
+ */
+function loadDeck(event) {
+    document.getElementById("deckList").innerHTML = ""
     cmcChart.data.datasets[0].data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     currDeck = {}
     var filePath = dialog.showOpenDialogSync({
@@ -190,21 +159,21 @@ function loadDeck(e) {
 
         findCardByID(id, (err, card) => {
             currDeck[id] = data[id]
-            var entry = document.createElement("div")
+            entry = document.createElement("div")
             entry.className = "deckEntry"
             entry.id = id
             entry.appendChild(document.createTextNode(card.name))
             entry.appendChild(document.createElement('div'))
             entry.appendChild(document.createTextNode('x' + data[id]))
             entry.setAttribute('data-img-src', card.image_uris.normal)
-            entry.addEventListener('click', (e) => {
-                c3.innerHTML = ""
+            entry.addEventListener('click', (event) => {
+                document.getElementById("c3").innerHTML = ""
                 var image = document.createElement("img")
-                image.src = e.srcElement.getAttribute('data-img-src')
+                image.src = event.srcElement.getAttribute('data-img-src')
                 image.className = "enhanced-image"
-                c3.appendChild(image)
+                document.getElementById("c3").appendChild(image)
             })
-            deckList.appendChild(entry)
+            document.getElementById("deckList").appendChild(entry)
 
             cmcChart.data.datasets[0].data[card.cmc] += 1
             cmcChart.update()
@@ -212,7 +181,11 @@ function loadDeck(e) {
     }
 }
 
-function saveDeck(e) {
+/**
+ * Opens a dialog box to save the currently viewed deck as a .dck file
+ * @param {*} event
+ */
+function saveDeck(event) {
     var filePath = dialog.showSaveDialogSync({
         title: "Save Deck",
         defaultPath: path.join(__dirname, "decks"),
@@ -223,12 +196,52 @@ function saveDeck(e) {
     deckName = path.basename(filePath, '.dck')
 }
 
-function selectCard(e) {
-    if (e.srcElement.className == "deckEntry") {
+/**
+ * Initializes selectedEntry with the chosen card
+ * @param {Event} event 
+ */
+function selectCard(event) {
+    if (event.srcElement.className == "deckEntry") {
         if (selectedEntry != undefined) {
             selectedEntry.style = ""
         }
-        e.srcElement.style = "background-color: gray;";
-        selectedEntry = e.srcElement
+        event.srcElement.style = "background-color: gray;";
+        selectedEntry = event.srcElement
     }
 }
+
+// Adds an event listener to add 1 from selectedEntry and update the decklist
+document.getElementById('plus-1').addEventListener('click', (e) => {
+    if (selectedEntry != undefined) {
+        var id = selectedEntry.id
+        currDeck[id] += 1
+        selectedEntry.removeChild(selectedEntry.lastChild)
+        selectedEntry.appendChild(document.createTextNode('x' + currDeck[id]))
+        cmcChart.data.datasets[0].data[card.cmc] -= 1
+        cmcChart.update()
+    }
+})
+
+// Adds an event listener to subtract 1 from selectedEntry and update the decklist
+document.getElementById('minus-1').addEventListener('click', (e) => {
+    if (selectedEntry != undefined) {
+        var id = selectedEntry.id
+
+        if (currDeck[id] == 1) {
+            document.getElementById("deckList").removeChild(selectedEntry)
+            delete currDeck[id]
+        } else {
+            currDeck[id] -= 1
+            selectedEntry.removeChild(selectedEntry.lastChild)
+            selectedEntry.appendChild(document.createTextNode('x' + currDeck[id]))
+        }
+        cmcChart.data.datasets[0].data[card.cmc] -= 1
+        cmcChart.update()
+    }
+})
+
+document.getElementById("searchBar").addEventListener('input', findResults)
+document.getElementById("loadDeck").addEventListener('click', loadDeck)
+document.getElementById("saveDeck").addEventListener('click', saveDeck)
+document.getElementById("c2").addEventListener('click', selectCard)
+document.getElementById("clearDeck").addEventListener('click', (event) => { document.getElementById("deckList").innerHTML = '' })
