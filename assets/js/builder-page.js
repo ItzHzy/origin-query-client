@@ -15,6 +15,7 @@ var selectedEntry; // currently selected card in decklist
  * @param {Event} event
  */
 function findResults(event) {
+    var input = document.getElementById("searchBar")
     document.getElementById("searchResults").innerHTML = "";
     if (input.value.length >= 3) {
         findCardsByNameQuery(new RegExp(input.value, 'ig'), (err, cards) => { cards.forEach(populateResult) })
@@ -159,7 +160,7 @@ function loadDeck(event) {
 
         findCardByID(id, (err, card) => {
             currDeck[id] = data[id]
-            entry = document.createElement("div")
+            var entry = document.createElement("div")
             entry.className = "deckEntry"
             entry.id = id
             entry.appendChild(document.createTextNode(card.name))

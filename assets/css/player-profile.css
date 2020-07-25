@@ -61,7 +61,7 @@
     font-size: xx-large;
 }
 
-.inquiry {
+#question {
     color: lightgrey;
     display: none;
     font-size: large;
@@ -71,7 +71,7 @@
     margin-top: 12px;
 }
 
-.answer {
-    display: none;
+#binary-answer {
+    display: flex;
     justify-content: space-evenly;
 }
