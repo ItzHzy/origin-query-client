@@ -340,12 +340,13 @@ function startPhase(data) {
 }
 
 function answerBinaryQuestion(data) {
+    console.log(data);
     var question = document.getElementById("question")
     var answer = document.getElementById("binary-answer")
     if (question.lastChild != null) {
         question.removeChild(question.lastChild)
     }
-    question.appendChild(document.createTextNode(data.question))
+    question.appendChild(document.createTextNode(data))
     question.style.display = "flex"
     answer.style.display = "flex"
     document.getElementById("yes").addEventListener('click', answerYes)
