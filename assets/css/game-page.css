@@ -51,7 +51,7 @@
     border-top: none;
 }
 
-.hostile-side>.field {
+.hostile-side>.Zone.FIELD {
     height: 70%;
 }
 
@@ -65,7 +65,7 @@
     border-radius: 3px;
 }
 
-.field {
+.Zone.FIELD {
     box-sizing: border-box;
     color: black;
     display: flex;
@@ -88,7 +88,7 @@
     border-right: none;
 }
 
-.hand {
+.Zone.HAND {
     color: black;
     display: flex;
     flex-direction: row;
@@ -110,13 +110,13 @@
     transition-duration: 0.25s;
 }
 
-.hand>.card {
+.Zone.HAND>.card {
     height: 90%;
     margin-right: -10%;
     margin-left: -10%;
 }
 
-.hand>.card:hover {
+.Zone.HAND>.card:hover {
     position: relative;
     z-index: 1000;
 }

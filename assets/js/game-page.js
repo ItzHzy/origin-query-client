@@ -69,6 +69,12 @@ function initilizeEventHandlers() {
     client.on("Binary Question", (data) => { answerBinaryQuestion(data) })
 
     client.on("Start Phase", (data) => { startPhase(data) })
+
+    client.on("Take Action", () => { takeAction() })
+
+    client.on("Tap", (data) => { tap(data) })
+
+    client.on("Add Mana", (data) => { manaCount(data) })
 }
 
 /**
@@ -117,24 +123,22 @@ function setUpGameBoard(data) {
             side.classList.add(height)
             side.querySelector(".friendly-side").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".hand").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".Zone.FIELD").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".Zone.HAND").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
+            side.querySelector(".pass-btn").addEventListener('click', pass)
 
             side.querySelector(".lands").addEventListener('dragenter', (e) => { e.preventDefault() })
             side.querySelector(".lands").addEventListener('dragover', (e) => { e.preventDefault() })
             side.querySelector(".lands").addEventListener("drop", (e) => {
                 e.preventDefault()
-                var msg = {
-                    "type": "Play Land",
-                    "data": {
-                        "playerID": currPlayerID,
-                        "gameID": currGameID,
-                        "instanceID": e.dataTransfer.getData("Text")
-                    }
-                }
-                serverConn.send(JSON.stringify(msg))
+                client.emit("Take Action", e.dataTransfer.getData("Text"))
+            })
+
+            side.querySelector(".Zone.FIELD").addEventListener('drop', (e) => {
+                e.preventDefault()
+                client.emit("Take Action", e.dataTransfer.getData("Text"))
             })
 
             gameBoard.appendChild(side)
@@ -146,7 +150,7 @@ function setUpGameBoard(data) {
             side.classList.add(height)
             side.querySelector(".hostile-side").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
+            side.querySelector(".Zone.FIELD").setAttribute('data-owned-by', data.players[index][0])
             side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
 
             side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
@@ -166,7 +170,7 @@ function setUpGameBoard(data) {
                 side.classList.add(height)
                 side.querySelector(".hostile-side").setAttribute('data-owned-by', data.players[index][0])
                 side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
-                side.querySelector(".field").setAttribute('data-owned-by', data.players[index][0])
+                side.querySelector(".Zone.FIELD").setAttribute('data-owned-by', data.players[index][0])
                 side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
 
                 side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
@@ -226,7 +230,7 @@ function chooseDeck() {
 function manaCount(data) {
     var count = document.querySelectorAll('[data-owned-by=' + data.playerID + '] > .player-profile__counts > .player-profile__count > .player-profile__count--num')[0]
     count.removeChild(count.lastChild)
-    count.appendChild(document.createTextNode(data.data.num))
+    count.appendChild(document.createTextNode(data.num))
 }
 
 /**
@@ -243,7 +247,7 @@ function newObject(data) {
     var instance = document.createElement('img')
     instance.setAttribute("data-instance-id", data.instanceID)
     instance.classList.add("card")
-    if (data.zone == "field" && data.types.includes("Type.LAND")) {
+    if (data.zone == "Zone.FIELD" && data.types.includes("Type.LAND")) {
         document.querySelector(".lands[data-owned-by=" + data.controller + "]").appendChild(instance)
     } else {
         document.querySelector("." + data.zone + "[data-owned-by=" + data.controller + "]").appendChild(instance)
@@ -253,61 +257,41 @@ function newObject(data) {
         instance.src = card.image_uris.normal
     })
 
-    if (data.types.includes("Supertype.BASIC") && data.zone == "field") {
-        instance.setAttribute("data-mana-ability-id", data.abilities[0][0])
-        instance.addEventListener("dblclick", (e) => {
-            var msg = {
-                "type": "Activate Ability",
-                "data": {
-                    "gameID": currGameID,
-                    "playerID": currPlayerID,
-                    "abilityID": e.srcElement.getAttribute("data-mana-ability-id"),
-                }
-            }
-            serverConn.send(JSON.stringify(msg))
-        })
-    } else {
-        var abilityPrompt = document.createElement('div')
-        abilityPrompt.classList.add("promptable")
 
-        var hdr = document.createElement('div')
-        hdr.classList.add("prompt-hdr")
-        hdr.appendChild(document.createTextNode("Abilites"))
-        abilityPrompt.append(hdr)
+    var abilityPrompt = document.createElement('div')
+    abilityPrompt.classList.add("promptable")
 
-        if (data.abilities.length != 0) {
-            for (const index in data.abilities) {
-                var ability = document.createElement('div')
-                ability.classList.add("ability")
-                ability.setAttribute("data-ability-id", data.abilities[index][0])
-                ability.appendChild(document.createTextNode(data.abilities[index][1]))
-                abilityPrompt.appendChild(ability)
-                ability.addEventListener('dblclick', (e) => {
-                    var msg = {
-                        "type": "Activate Ability",
-                        "data": {
-                            "gameID": currGameID,
-                            "playerID": currPlayerID,
-                            "abilityID": e.srcElement.getAttribute("data-ability-id")
-                        }
-                    }
-                    serverConn.send(JSON.stringify(msg))
-                    closePrompt(null)
-                })
-            }
-            document.getElementById("game-page").appendChild(abilityPrompt)
-            instance.addEventListener('dblclick', (e) => {
-                gameBoard.style.filter = "blur(5px)"
-                abilityPrompt.style.display = "flex"
-                currPrompt = abilityPrompt
-                blurred = gameBoard
-                window.setTimeout(function() {
-                    abilityPrompt.classList.add("prompt")
-                }, 100)
+    var hdr = document.createElement('div')
+    hdr.classList.add("prompt-hdr")
+    hdr.appendChild(document.createTextNode("Abilites"))
+    abilityPrompt.append(hdr)
+
+    if (data.abilities.length != 0) {
+        for (const index in data.abilities) {
+            var ability = document.createElement('div')
+            ability.classList.add("ability")
+            ability.setAttribute("data-ability-id", data.abilities[index][0])
+            ability.appendChild(document.createTextNode(data.abilities[index][1]))
+            abilityPrompt.appendChild(ability)
+            ability.addEventListener('dblclick', (e) => {
+                client.emit("Take Action", e.srcElement.getAttribute("data-ability-id"))
+                closePrompt(null)
             })
         }
+        document.getElementById("game-page").appendChild(abilityPrompt)
+        instance.addEventListener('dblclick', (e) => {
+            document.getElementById("game-board").style.filter = "blur(5px)"
+            abilityPrompt.style.display = "flex"
+            currPrompt = abilityPrompt
+            blurred = document.getElementById("game-board")
+            window.setTimeout(function() {
+                abilityPrompt.classList.add("prompt")
+            }, 100)
+        })
+
     }
-    if (data.zone == "hand") {
+
+    if (data.zone == "Zone.HAND") {
         instance.draggable = "true"
         instance.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData("Text", e.srcElement.getAttribute('data-instance-id'))
@@ -322,8 +306,8 @@ function newObject(data) {
  * Handles "Tap" messages. Taps the specified card
  * @param {Object} data 
  */
-function tap(data) {
-    var card = document.querySelector("[data-instance-id=" + data.instanceID + "]")
+function tap(instanceID) {
+    var card = document.querySelector("[data-instance-id=" + instanceID + "]")
     if (card != null) {
         card.classList.add("tapped")
     }
@@ -363,6 +347,15 @@ function answerNo() {
     document.getElementById("question").style.display = "none"
     document.getElementById("binary-answer").style.display = "none"
     client.emit("Answer Question", { "answer": false })
+}
+
+function pass() {
+    document.querySelector(".pass-btn").style.display = "none"
+    client.emit("Pass")
+}
+
+function takeAction() {
+    document.querySelector(".pass-btn").style.display = "flex"
 }
 
 document.getElementById("lobby__choose-deck-btn").addEventListener('click', chooseDeck)
