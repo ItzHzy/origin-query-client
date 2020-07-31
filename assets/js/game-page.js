@@ -51,7 +51,9 @@ function initilizeEventHandlers() {
 
 
 
-    client.on("Start Game", (data) => { setUpGameBoard(data) })
+    client.on("Start Game", (data) => {
+        setUpGameBoard(data)
+    })
 
     /**
      * Handles Zone count updates
@@ -113,38 +115,33 @@ function setUpGameBoard(data) {
         height = "height-25"
     }
 
+    var side = document.getElementById("board-side-friendly-template").cloneNode(true)
+    side.style.display = "flex"
+    side.classList.add(height)
+    side.querySelector(".friendly-side").setAttribute('data-owned-by', data.players[0][0])
+    side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[0][0])
+    side.querySelector(".Zone.FIELD").setAttribute('data-owned-by', data.players[0][0])
+    side.querySelector(".Zone.HAND").setAttribute('data-owned-by', data.players[0][0])
+    side.querySelector(".lands").setAttribute('data-owned-by', data.players[0][0])
+    side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[0][1]))
+    side.querySelector(".pass-btn").addEventListener('click', pass)
+
+    side.querySelector(".lands").addEventListener('dragenter', (e) => { e.preventDefault() })
+    side.querySelector(".lands").addEventListener('dragover', (e) => { e.preventDefault() })
+    side.querySelector(".lands").addEventListener("drop", (e) => {
+        e.preventDefault()
+        client.emit("Take Action", e.dataTransfer.getData("Text"))
+    })
+
+    side.querySelector(".Zone.FIELD").addEventListener('drop', (e) => {
+        e.preventDefault()
+        client.emit("Take Action", e.dataTransfer.getData("Text"))
+    })
+
+    gameBoard.appendChild(side)
 
     for (const index in data.players) {
-        if (data.players[index][0] == currPlayerID) {
-            started = true
-
-            var side = document.getElementById("board-side-friendly-template").cloneNode(true)
-            side.style.display = "flex"
-            side.classList.add(height)
-            side.querySelector(".friendly-side").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".Zone.FIELD").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".Zone.HAND").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
-            side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
-            side.querySelector(".pass-btn").addEventListener('click', pass)
-
-            side.querySelector(".lands").addEventListener('dragenter', (e) => { e.preventDefault() })
-            side.querySelector(".lands").addEventListener('dragover', (e) => { e.preventDefault() })
-            side.querySelector(".lands").addEventListener("drop", (e) => {
-                e.preventDefault()
-                client.emit("Take Action", e.dataTransfer.getData("Text"))
-            })
-
-            side.querySelector(".Zone.FIELD").addEventListener('drop', (e) => {
-                e.preventDefault()
-                client.emit("Take Action", e.dataTransfer.getData("Text"))
-            })
-
-            gameBoard.appendChild(side)
-        }
-
-        if (started && data.players[index][0] != currPlayerID) {
+        if (index != 0) {
             var side = document.getElementById("board-side-hostile-template").cloneNode(true)
             side.style.display = "flex"
             side.classList.add(height)
@@ -159,30 +156,9 @@ function setUpGameBoard(data) {
         }
     }
 
-    for (const index in data.players) {
-        if (!finished) {
-            if (data.players[index][0] == currPlayerID) {
-                finished = true
-            } else {
-
-                var side = document.getElementById("board-side-hostile-template").cloneNode(true)
-                side.style.display = "flex"
-                side.classList.add(height)
-                side.querySelector(".hostile-side").setAttribute('data-owned-by', data.players[index][0])
-                side.querySelector(".player-profile").setAttribute('data-owned-by', data.players[index][0])
-                side.querySelector(".Zone.FIELD").setAttribute('data-owned-by', data.players[index][0])
-                side.querySelector(".lands").setAttribute('data-owned-by', data.players[index][0])
-
-                side.querySelector(".player-profile__name").appendChild(document.createTextNode(data.players[index][1]))
-
-                gameBoard.appendChild(side)
-            }
-        }
-    }
-
     document.getElementById("lobby").style.display = "none"
     gameBoard.style.display = "flex"
-    document.getElementById("stack").style.display = "flex"
+    document.querySelector(".Zone.STACK").style.display = "flex"
 }
 
 
@@ -250,7 +226,11 @@ function newObject(data) {
     if (data.zone == "Zone.FIELD" && data.types.includes("Type.LAND")) {
         document.querySelector(".lands[data-owned-by=" + data.controller + "]").appendChild(instance)
     } else {
-        document.querySelector("." + data.zone + "[data-owned-by=" + data.controller + "]").appendChild(instance)
+        if (data.zone == "Zone.STACK") {
+            document.querySelector("." + data.zone).appendChild(instance)
+        } else {
+            document.querySelector("." + data.zone + "[data-owned-by=" + data.controller + "]").appendChild(instance)
+        }
     }
 
     findCardByID(data.oracle, (err, card) => {
@@ -314,8 +294,9 @@ function tap(instanceID) {
 }
 
 function startPhase(data) {
-    document.querySelectorAll(".friendly-side", ".hostile-side").forEach((side) => {
-        if (data.playerID == side.getAttribute("[data-owned-by=" + data.activePlayer + "]")) {
+    document.querySelectorAll(".friendly-side,.hostile-side").forEach((side) => {
+
+        if (data.activePlayer == side.getAttribute("data-owned-by")) {
             side.style.boxShadow = "inset 0 0 0 1px white"
         } else {
             side.style.boxShadow = ""
@@ -324,7 +305,6 @@ function startPhase(data) {
 }
 
 function answerBinaryQuestion(data) {
-    console.log(data);
     var question = document.getElementById("question")
     var answer = document.getElementById("binary-answer")
     if (question.lastChild != null) {

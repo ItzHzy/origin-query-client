@@ -55,7 +55,7 @@
     height: 70%;
 }
 
-#stack {
+.Zone.STACK {
     color: black;
     display: none;
     box-sizing: border-box;
@@ -63,6 +63,12 @@
     height: 100%;
     border: 5px solid;
     border-radius: 3px;
+}
+
+.Zone.STACK>.card {
+    width: 90%;
+    margin-top: none;
+    margin-bottom: none;
 }
 
 .Zone.FIELD {
@@ -74,6 +80,8 @@
     height: 40%;
     width: 100%;
 }
+
+.Zone.FIELD>.card {}
 
 .lands {
     box-sizing: border-box;

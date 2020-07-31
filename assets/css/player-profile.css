@@ -72,7 +72,7 @@
 }
 
 #binary-answer {
-    display: flex;
+    display: none;
     justify-content: space-evenly;
 }
 
