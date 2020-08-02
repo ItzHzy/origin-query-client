@@ -1,13 +1,6 @@
-console.log('main process working')
-
-const electron = require("electron");
-
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow
-
-const path = require("path")
-const url = require("url")
-
+const {app, BrowserWindow} = require('electron')
+const path = require('path')
+const isDev = require('electron-is-dev');
 
 let win;
 
@@ -20,17 +13,9 @@ function createWindow() {
         width: 1500,
         minHeight: 1080,
         minWidth: 1500
-            // height: 800,
-            // width: 1200,
-            // minHeight: 800,
-            // minWidth: 1200
     });
 
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, 'main.html'),
-        protocol: 'file',
-        slashes: true
-    }));
+    isDev ? win.loadURL('http://localhost:3000/') : win.loadURL(path.join(__dirname, '../build/index.html'))
 
     win.on('closed', () => {
         win = null;
