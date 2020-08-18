@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components'
-import PageContext from './context/PageContext'
+import PageContext from '../../context/PageContext'
 import Activity from './Activity'
 import Tab from './Tab'
 
@@ -41,19 +41,19 @@ const App = () => {
   const changePage = (page) => setPage(page)
 
   return (
-    <PageContext.Provider value={{page, changePage}}>
-    <Container>
-      <Tabs>
-        <Logo />
-        <LineBreak></LineBreak>
-        <Tab src={require("./assets/builder.svg")} page='builder'/>
-        <Tab src={require("./assets/stats.svg")} page='stats'/>
-        <Tab src={require("./assets/game.svg")} page='builder'/>
-        <Tab src={require("./assets/server.svg")} page='builder'/>
-        <Tab src={require("./assets/settings.svg")} page='builder'/>
-      </Tabs>
-      <Activity />
-    </Container>
+    <PageContext.Provider value={{ page, changePage }}>
+      <Container>
+        <Tabs>
+          <Logo />
+          <LineBreak></LineBreak>
+          <Tab src={require("../../images/builder.svg")} page='builder' />
+          <Tab src={require("../../images/stats.svg")} page='stats' />
+          <Tab src={require("../../images/game.svg")} page='builder' />
+          <Tab src={require("../../images/server.svg")} page='builder' />
+          <Tab src={require("../../images/settings.svg")} page='builder' />
+        </Tabs>
+        <Activity />
+      </Container>
     </PageContext.Provider>
   );
 }

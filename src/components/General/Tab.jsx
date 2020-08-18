@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import PageContext from './context/PageContext'
+import PageContext from '../../context/PageContext'
 
 const Container = styled.button`
     display: flex;

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import SearchBar from './SearchBar';
+import SearchBar from './Search/SearchBar';
 
 const Container = styled.div`
     display: flex;
@@ -46,20 +46,19 @@ const DeckList = styled.div`
     border-radius: 7px;
 `
 
-class Builder extends Component {
-    render() { 
-        return ( 
-            <Container>
-                <Header>
-                    <SearchBar/>
-                </Header>
-                <FlexRow>
-                    <SearchResults></SearchResults>
-                    <DeckList></DeckList>
-                </FlexRow>
-            </Container>
-         );
-    }
+const Builder = () => {
+    return (
+        <Container>
+            <Header>
+                <SearchBar />
+            </Header>
+            <FlexRow>
+                <SearchResults>
+                </SearchResults>
+                <DeckList></DeckList>
+            </FlexRow>
+        </Container>
+    );
 }
- 
+
 export default Builder;
