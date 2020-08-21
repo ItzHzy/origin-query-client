@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components'
-import { Store, searchResults } from '../../../store'
+import { useDispatch } from 'react-redux'
 
 const Container = styled.form`
     display: flex;
     height: 30px;
     width: 20%;
     margin-left: 20px;
+    margin-top: auto;
+    margin-bottom: auto;
     border-style: solid;
     border-radius: 5px;
     border-color: black;
@@ -31,26 +33,33 @@ const Input = styled.input`
 `
 
 const SearchBar = (props) => {
+    const dispatch = useDispatch()
 
     const findResults = (event) => {
+        if (event.key != 'Enter') {
+            return
+        }
         event.preventDefault()
-
         fetch("https://api.scryfall.com/cards/search?" + new URLSearchParams({
-            q: 'Island'
+            q: event.target.value
         }))
             .then(response => response.json())
             .then(response => {
-                const ans = response.data.map((card) => { return card.image_uris.png })
-                console.log(ans)
+                dispatch({
+                    type: "SEARCH_RESULTS",
+                    results: response.data.map((card) => {
+                        if (card != undefined) {
+                            return { name: card.name, image: card.image_uris.png }
+                        }
+                    })
+                })
             });
-        // Store.dispath(searchResults())
-        // console.log(event.target.value)
     }
 
     return (
         <Container>
-            <Img src={require("../../../images/search.svg")}></Img>
-            <Input type="text" onChange={findResults} placeholder="Search"></Input>
+            <Img src={require("../../../assets/images/search.svg")}></Img>
+            <Input type="text" onKeyPress={findResults} placeholder="Search"></Input>
         </Container >
     );
 }

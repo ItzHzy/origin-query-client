@@ -1,8 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux'
 import Builder from '../Builder/Builder'
 import Statistics from '../Statistics/Statistics'
-import PageContext from '../../context/PageContext';
+import Server from '../Server/Server'
+import Settings from '../Settings/Settings'
 
 
 const Container = styled.div`
@@ -12,7 +14,7 @@ const Container = styled.div`
 `
 
 const Activity = () => {
-    const { page } = useContext(PageContext)
+    const page = useSelector((state) => state.currentPage)
 
     return (
         <Container>
@@ -22,6 +24,10 @@ const Activity = () => {
                         return <Builder />;
                     case 'stats':
                         return <Statistics />
+                    case 'server':
+                        return <Server />
+                    case 'settings':
+                        return <Settings />
                     default:
                         return <Builder />;
                 }

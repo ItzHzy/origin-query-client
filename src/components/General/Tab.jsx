@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import PageContext from '../../context/PageContext'
+import { useDispatch } from 'react-redux'
 
 const Container = styled.button`
     display: flex;
@@ -31,14 +31,13 @@ const Container = styled.button`
     }
 `
 const Tab = (props) => {
-    const { changePage } = useContext(PageContext)
-    
-    return ( 
-        <Container onClick={() => {changePage(props.page)}}>
-            <img src={props.src} width={'40px'} height={'40px'} alt={""}/>
-        </Container> 
-     );
+    const dispatch = useDispatch()
+    return (
+        <Container onClick={() => { dispatch({ type: props.page }) }}>
+            <img src={props.src} width={'40px'} height={'40px'} alt={""} />
+        </Container>
+    );
 }
 
- 
+
 export default Tab;
