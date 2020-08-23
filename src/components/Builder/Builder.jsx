@@ -36,14 +36,16 @@ const Header = styled.div`
     height: 40px;
 `
 
-const DeckTitle = styled.p`
+const DeckTitle = styled.input`
     margin-top: 0px;
     margin-left: 300px;
-    height: fit-content;
-    width: fit-content;
+    height: 100%;
+    width: ${props => props.value.length * 20}px;
     font-size: xx-large;
     font-weight: bold;
     color: #d9d9d9;
+    background: none;
+    border: none;
 `
 
 const Builder = () => {
@@ -67,19 +69,13 @@ const Builder = () => {
     const saveDeck = (event) => {
         var filePath = dialog.showSaveDialogSync({
             title: "Save Deck",
-            defaultPath: path.join(__dirname, "deck"),
+            defaultPath: path.join(__dirname, deck.title),
             buttonLabel: "Save Deck",
             filters: [{ name: 'Cardname Studio Deck', extensions: ['dck'] }, { name: 'All Files', extensions: ['*'] }]
         })
 
-        var title = path.basename(filePath, '.dck')
-
-        dispatch({
-            type: "SET_DECK_NAME",
-            title: title
-        })
-
         ipcRenderer.send("Create File", filePath, JSON.stringify(deck))
+
     }
 
     const setDeckName = (event) => {
@@ -93,7 +89,7 @@ const Builder = () => {
         <Container>
             <Header>
                 <SearchBar />
-                <DeckTitle spellCheck={false} onChange={setDeckName}>{deck.title}</DeckTitle>
+                <DeckTitle type="text" value={deck.title} onChange={setDeckName}></DeckTitle>
                 <SecondaryButton type="button" onClick={loadDeck} label="+ LOAD" />
                 <PrimaryButton type="button" onClick={saveDeck} label="✔ SAVE" />
             </Header>

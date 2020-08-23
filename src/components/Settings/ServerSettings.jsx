@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { injectReducer } from 'redux-injector';
 import PrimaryButton from '../General/PrimaryButton'
 
 const Container = styled.div`

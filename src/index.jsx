@@ -1,12 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/General/App';
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import { rootReducer } from './store'
-import './assets/css/index.css'
-
-const store = createStore(rootReducer)
+import { store } from './reducers/store'
+import App from './components/General/App';
+import './assets/css/styles.css'
 
 const root = document.createElement('div')
 root.id = 'root'

@@ -14,12 +14,12 @@ const Container = styled.div`
 `
 
 const Activity = () => {
-    const page = useSelector((state) => state.currentPage)
+    const activity = useSelector((state) => state.currentActivity)
 
     return (
         <Container>
             {(function () {
-                switch (page) {
+                switch (activity) {
                     case 'builder':
                         return <Builder />;
                     case 'stats':
