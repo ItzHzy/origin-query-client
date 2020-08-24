@@ -1,30 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit'
 
-const testGameListings = [
-    {
-        gameID: "1",
-        title: "Test",
-        creator: "Test",
-        numPlayers: "34",
-        status: "OPEN"
-    },
-    {
-        gameID: "2",
-        title: "Test2",
-        creator: "Test2",
-        numPlayers: "4",
-        status: "OPEN"
-    },
-    {
-        gameID: "3",
-        title: "Test3",
-        creator: "Test3",
-        numPlayers: "23",
-        status: "OPEN"
-    }
-]
-
-export const updateGameListings = createReducer(testGameListings, {
+export const updateGameListings = createReducer([], {
     "ALL_LISTINGS": (state, action) => {
         return action.games
     },

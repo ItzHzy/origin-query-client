@@ -5,4 +5,5 @@ export const changeActivity = createReducer("server", {
     "stats": (state, action) => { return "stats" },
     "server": (state, action) => { return "server" },
     "settings": (state, action) => { return "settings" },
+    "game": (state, action) => { return "game" }
 })

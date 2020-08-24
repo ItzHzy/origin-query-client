@@ -1,21 +1,21 @@
 import React from 'react';
-import styled from 'styled-components';
+import { Field } from 'redux-form'
 
-const Container = styled.input`
-    display: flex;
-    width: ${props => props.width};
-    background: #ffffff17;
-    color: #d9d9d9;
-    outline: none;
-    border: none;
-    border-radius: 10px;
-    font-size: x-large;
-    text-indent: 10px;
-`
+const textBoxStyles = {
+    display: "flex",
+    width: "90%",
+    background: '#ffffff17',
+    color: '#d9d9d9',
+    outline: 'none',
+    border: 'none',
+    borderRadius: '10px',
+    fontSize: 'x-large',
+    textIndent: '10px'
+}
 
 const TextBox = (props) => {
     return (
-        <Container type="text" width={props.width} placeholder={props.placeholder}></Container>
+        <Field type="text" width={props.width} component="input" style={textBoxStyles} placeholder={props.placeholder} name={props.name}></Field>
     );
 }
 

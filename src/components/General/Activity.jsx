@@ -5,6 +5,7 @@ import Builder from '../Builder/Builder'
 import Statistics from '../Statistics/Statistics'
 import Server from '../Server/Server'
 import Settings from '../Settings/Settings'
+import Game from '../Game/Game'
 
 
 const Container = styled.div`
@@ -15,23 +16,28 @@ const Container = styled.div`
 
 const Activity = () => {
     const activity = useSelector((state) => state.currentActivity)
+    const currentGame = useSelector((state) => state.currentGame)
+
+    const returnActivity = () => {
+        switch (activity) {
+            case 'builder':
+                return <Builder />;
+            case 'stats':
+                return <Statistics />
+            case 'server':
+                return <Server />
+            case 'settings':
+                return <Settings />
+            case 'game':
+                return <Game currentGame={currentGame} />
+            default:
+                return <Builder />;
+        }
+    }
 
     return (
         <Container>
-            {(function () {
-                switch (activity) {
-                    case 'builder':
-                        return <Builder />;
-                    case 'stats':
-                        return <Statistics />
-                    case 'server':
-                        return <Server />
-                    case 'settings':
-                        return <Settings />
-                    default:
-                        return <Builder />;
-                }
-            })()}
+            {returnActivity()}
         </Container>
     );
 }

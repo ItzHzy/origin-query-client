@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components'
+import { useSelector } from 'react-redux'
 import Activity from './Activity'
 import Tab from './Tab'
 
@@ -35,6 +36,8 @@ const Container = styled.div`
 `
 
 const App = () => {
+  const gameStatus = useSelector((state) => state.gameStatus)
+
   return (
     <Container>
       <Tabs>
@@ -42,7 +45,7 @@ const App = () => {
         <LineBreak></LineBreak>
         <Tab src={require("../../assets/images/builder.svg")} page='builder' />
         <Tab src={require("../../assets/images/stats.svg")} page='stats' />
-        <Tab src={require("../../assets/images/game.svg")} page='builder' />
+        {(gameStatus != null) ? <Tab src={require("../../assets/images/game.svg")} page='game' /> : []}
         <Tab src={require("../../assets/images/server.svg")} page='server' />
         <Tab src={require("../../assets/images/settings.svg")} page='settings' />
       </Tabs>

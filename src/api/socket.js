@@ -13,4 +13,5 @@ export const connectToServer = (serverAddress) => {
 client.on('connect', () => {
     console.log("Connected");
     initializeServerHandlers(client)
+    client.emit("Login", { user: "user", pass: "pass" })
 })

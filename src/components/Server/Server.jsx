@@ -44,7 +44,7 @@ const Hekma = styled.div`
 const Server = () => {
     const dispatch = useDispatch()
     const isCreateGamePromptShowing = useSelector(state => state.isCreateGamePromptShowing)
-    const gameListings = useSelector(state => state.gameListings)
+    const gameListings = useSelector((state) => state.gameListings)
 
     const showCreateGamePrompt = () => {
         dispatch({
@@ -69,7 +69,6 @@ const Server = () => {
                     return <GameListing key={game.gameID + "-Listing"} title={game.title} creator={game.creator} numPlayers={game.numPlayers} status={game.status} />
                 })}
             </GameListings>
-            {isCreateGamePromptShowing ? <CreateGamePrompt></CreateGamePrompt> : []}
         </Container>
     );
 }
