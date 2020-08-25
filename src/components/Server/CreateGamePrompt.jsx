@@ -72,7 +72,6 @@ const _CreateGamePrompt = (props) => {
             title: values.title,
             numPlayers: values.numPlayers
         })
-        console.log(values);
     }
 
     return (

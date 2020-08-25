@@ -1,4 +1,5 @@
 import { store } from '../reducers/store'
+import { cloneDeep } from 'lodash'
 
 export const initializeServerHandlers = (socket) => {
     socket.on('disconnect', () => {
@@ -52,6 +53,29 @@ export const initializeServerHandlers = (socket) => {
         store.dispatch({
             type: "SET_GAME_STATUS",
             payload: "In Progress"
+        })
+
+        store.dispatch({
+            type: "SET_PLAYERS",
+            payload: data
+        })
+    })
+
+    socket.on("New Object", (data) => {
+
+        var datum = cloneDeep(data)
+
+        fetch("https://api.scryfall.com/cards/search?" + new URLSearchParams({
+            q: datum.name
+        }))
+            .then(response => response.json())
+            .then(response => {
+                datum.src = response.data[0].image_uris.png
+            });
+
+        store.dispatch({
+            type: "ADD_CARD",
+            payload: datum
         })
     })
 }
