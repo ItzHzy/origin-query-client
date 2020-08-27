@@ -3,8 +3,15 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux'
 import Hand from './Hand'
 import BoardSide from './BoardSide'
+import Stack from './Stack'
 
 const Container = styled.div`
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+`
+const SubContainer = styled.div`
     display: flex;
     flex-direction: column-reverse;
     height: 100%;
@@ -16,10 +23,13 @@ const GameBoard = () => {
 
     return (
         <Container>
-            <Hand playerID={players[0].playerID} />
-            {players.map((player) => {
-                return <BoardSide key={player.playerID} player={player} />
-            })}
+            <SubContainer>
+                <Hand playerID={players[0].playerID} />
+                {players.map((player) => {
+                    return <BoardSide key={player.playerID} playerID={player.playerID} />
+                })}
+            </SubContainer>
+            <Stack />
         </Container>
     );
 }

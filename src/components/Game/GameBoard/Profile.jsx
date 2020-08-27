@@ -1,5 +1,7 @@
 import React, { Profiler } from 'react';
 import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux'
+import { client } from '../../../api/socket'
 
 const Container = styled.div`
     display: flex;
@@ -11,8 +13,8 @@ const Container = styled.div`
 
 const ProfilePic = styled.img`
     display: flex;
-    height: 150px;
-    width: 150px;
+    height: 100px;
+    width: 100px;
     border-radius: 50%;
     oveflow: hidden;
     border: solid 2x black;
@@ -28,7 +30,7 @@ const Name = styled.p`
     margin-right: auto;
     height: fit-content;
     width fit-content;
-    font-size: xxx-large;
+    font-size: x-large;
     margin-bottom: 0px;
 `
 
@@ -40,7 +42,7 @@ const SubContainer = styled.div`
     margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
-    justify-content: space-between;
+    justify-content: space-evenly;
 `
 
 const Datum = styled.div`
@@ -67,41 +69,115 @@ const DatumCount = styled.p`
     margin-top: auto;
     margin-bottom: auto;
 `
+const Question = styled.p`
+    display: flex;
+    height: 20px;
+    width: fit-content;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0px;
+    font-size: x-large;
+`
+
+const Answer = styled.button`
+    display: flex;
+    height: fit-content;
+    width: fit-content;    
+    border: none;
+    outline: none;
+    background: none;
+    color: ${props => props.color};
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: x-large;
+
+    &:hover{
+        cursor: pointer;
+    }
+`
+
+const PassBtn = styled.button`
+    display: flex;
+    height: fit-content;
+    width: fit-content;    
+    border: none;
+    outline: none;
+    background: none;
+    color: green;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: x-large;
+
+    &:hover{
+        cursor: pointer;
+    }
+`
 
 
 const Profile = (props) => {
+    const dispatch = useDispatch()
+    const player = useSelector(state => state.players.find(player => player.playerID == props.playerID))
+
+    const answerQuestion = (answer) => {
+        dispatch({
+            type: "SET_BINARY_QUESTION",
+            payload: null
+        })
+
+        client.emit("Answer Question", answer)
+    }
+
+    const pass = () => {
+        dispatch({
+            type: "TAKING_ACTION",
+            payload: false
+        })
+
+        client.emit("Pass")
+    }
     return (
         <Container>
             <ProfilePic src={require("../../../assets/images/default-pfp.svg")} />
-            <Name>{props.player.name}</Name>
+            <Name>{player.name}</Name>
             <SubContainer>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/mana-pool.svg")} />
-                    <DatumCount>{props.player.totalMana}</DatumCount>
+                    <DatumCount>{player.totalMana}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/hand.svg")} />
-                    <DatumCount>{props.player.handCount}</DatumCount>
+                    <DatumCount>{player.handCount}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/heart.svg")} />
-                    <DatumCount>{props.player.lifeTotal}</DatumCount>
+                    <DatumCount>{player.lifeTotal}</DatumCount>
                 </Datum>
             </SubContainer>
             <SubContainer>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/exile.svg")} />
-                    <DatumCount>{props.player.exileCount}</DatumCount>
+                    <DatumCount>{player.exileCount}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/grave.svg")} />
-                    <DatumCount>{props.player.graveCount}</DatumCount>
+                    <DatumCount>{player.graveCount}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/deck.svg")} />
-                    <DatumCount>{props.player.deckCount}</DatumCount>
+                    <DatumCount>{player.deckCount}</DatumCount>
                 </Datum>
             </SubContainer>
+            {player.binaryQuestion ?
+                <>
+                    <Question>{player.binaryQuestion}</Question>
+                    <SubContainer>
+                        <Answer color="green" onClick={() => { answerQuestion(true) }}>Yes</Answer>
+                        <Answer color="red" onClick={() => { answerQuestion(false) }}>No</Answer>
+                    </SubContainer>
+                </> : []}
+            {player.takingAction && !(player.binaryQuestion) ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
         </Container>
     );
 }

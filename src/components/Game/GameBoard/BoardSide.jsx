@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux'
 import Profile from './Profile'
+import Field from './Field'
+import Land from './Land'
 
 const Container = styled.div`
     display: flex;
@@ -9,6 +11,7 @@ const Container = styled.div`
     height: ${(props) => { return 200 / (1 + 2 * (props.numPlayers)) }}%;
     width: 100%;
     border: solid 2px black;
+    border-left: none;
 `
 
 const SubContainer = styled.div`
@@ -18,32 +21,16 @@ const SubContainer = styled.div`
     width: 100%;
 `
 
-const Field = styled.div`
-    display: flex;
-    flex-direction: row;
-    height: 50%;
-    width: 100%;
-    border-bottom: solid 2px black;
-`
-
-const Land = styled.div`
-    display: flex;
-    flex-direction: row;
-    height: 50%;
-    width: 100%;
-`
-
 
 const BoardSide = (props) => {
-    const cards = useSelector(state => state.gameState)
-    const players = useSelector(state => state.players)
+    const numPlayers = useSelector(state => state.gameStatus.numPlayers)
 
     return (
-        <Container numPlayers={players.length}>
-            <Profile player={props.player} />
+        <Container numPlayers={numPlayers}>
+            <Profile playerID={props.playerID} />
             <SubContainer>
-                <Field />
-                <Land />
+                <Field playerID={props.playerID} />
+                <Land playerID={props.playerID} />
             </SubContainer>
         </Container>
     );

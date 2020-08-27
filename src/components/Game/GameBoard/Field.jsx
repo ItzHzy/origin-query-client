@@ -6,8 +6,9 @@ import CardInstance from './CardInstance'
 const Container = styled.div`
     display: flex;
     flex-direction: row;
-    height: ${(props) => { return (100 / (1 + (2 * props.numPlayers))) }}%;
+    height: 50%;
     width: 100%;
+    border-bottom: solid 2px black;
     justify-content: space-evenly;
 
     &>:nth-child(1n){
@@ -16,20 +17,20 @@ const Container = styled.div`
         width: fit-content;
         margin-top: auto;
         margin-bottom: auto;
-        margin-left: -250px;
-        margin-right: -250px;
     }
+    
 `
 
-const Hand = (props) => {
+const Field = (props) => {
     const cards = useSelector(state => state.gameState)
-    const players = useSelector(state => state.players)
 
     return (
-        <Container numPlayers={players.length}>{cards.filter(card => ((card.controller == props.playerID) && (card.zone == "Zone.HAND"))).map(card => {
-            return <CardInstance src={card.src} key={card.instanceID} card={card} />
-        })}</Container>
+        <Container>
+            {cards.filter(card => ((card.controller == props.playerID) && (card.zone == "Zone.FIELD") && !(card.types.includes("Type.LAND")))).map(card => {
+                return <CardInstance src={card.src} key={card.instanceID} card={card} tapped={card.tapped} />
+            })}
+        </Container>
     );
 }
 
-export default Hand;
+export default Field;
