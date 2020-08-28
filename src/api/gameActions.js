@@ -2,14 +2,18 @@ import { store } from '../reducers/store'
 
 export const initializeGameHandlers = (socket) => {
     socket.on("Joined Game", (data) => {
-        store.dispatch({
-            type: "SET_PLAYERS",
-            payload: data.players
-        })
 
         store.dispatch({
-            type: "SET_GAME_STATUS",
-            payload: "In Lobby"
+            type: 
+        })
+        store.dispatch({
+            type: "SET_INTIAL_GAME_STATE",
+            payload: {
+                title: data.title,
+                started: false,
+                numPlayers: data.players.length,
+                players: data.players
+            }
         })
 
         store.dispatch({
@@ -21,17 +25,22 @@ export const initializeGameHandlers = (socket) => {
         })
     })
 
-    socket.on("Start Game", (data) => {
+    socket.on("Ready", (data) => {
         store.dispatch({
-            type: "SET_GAME_STATUS",
-            payload: {
-                title: "Untitled",
-                numPlayers: data.length,
-                started: true,
-                inGame: true
-            }
+            type: "READY",
+            payload: data
         })
+    })
 
+    socket.on("Not Ready", (data) => {
+        store.dispatch({
+            type: "NOT_READY",
+            payload: data
+
+        })
+    })
+
+    socket.on("Start Game", (data) => {
         store.dispatch({
             type: "SET_PLAYERS",
             payload: data
@@ -53,13 +62,6 @@ export const initializeGameHandlers = (socket) => {
             });
     })
 
-    socket.on("Binary Question", (data) => {
-        store.dispatch({
-            type: "SET_BINARY_QUESTION",
-            payload: data
-        })
-    })
-
     socket.on("Remove Object", (data) => {
         store.dispatch({
             type: "REMOVE_CARD",
@@ -71,6 +73,13 @@ export const initializeGameHandlers = (socket) => {
         store.dispatch({
             type: "TAKING_ACTION",
             payload: true
+        })
+    })
+
+    socket.on("Binary Question", (data) => {
+        store.dispatch({
+            type: "SET_BINARY_QUESTION",
+            payload: data
         })
     })
 

@@ -24,17 +24,33 @@ const Entry = styled.div`
     
     &:hover {
         cursor: pointer;
-        background-color: #737373;
+    }
+
+    &>p{
+        height: fit-content;
+        width: fit-content;
+        color: white;
+        font-size: large;
+        margin-top: auto;
+        margin-bottom: auto;
     }
 `
 
 const PlayerList = () => {
-    const players = useSelector((state) => state.players)
+    const players = useSelector((state) => state.gameStatus.players)
 
     return (
         <Container>
             {players.map((player) => {
-                return <Entry key={player.name}>{player.name}</Entry>
+                return <Entry key={player.playerID}>
+
+                    <p>{player.name}</p>
+
+                    {player.ready
+                        ? <p style={{ color: "green" }}>Ready</p>
+                        : <p style={{ color: "red" }}>Not Ready</p>}
+
+                </Entry>
             })}
         </Container>
     );

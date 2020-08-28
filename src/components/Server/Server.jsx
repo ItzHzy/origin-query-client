@@ -66,7 +66,7 @@ const Server = () => {
             </Header>
             <GameListings>
                 {gameListings.map((game) => {
-                    return <GameListing key={game.gameID + "-Listing"} title={game.title} creator={game.creator} numPlayers={game.numPlayers} status={game.status} />
+                    return <GameListing key={game.gameID + "-Listing"} title={game.title} creator={game.creator} numPlayers={game.numPlayers} status={game.status} gameID={game.gameID} />
                 })}
             </GameListings>
         </Container>

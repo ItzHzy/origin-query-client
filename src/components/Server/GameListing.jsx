@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { client } from '../../api/socket'
 
 const Container = styled.div`
     display: flex;
@@ -32,8 +33,12 @@ const Status = styled.span`
 `
 
 const GameListing = (props) => {
+    const joinGame = () => {
+        client.emit("Join Game", props.gameID)
+    }
+
     return (
-        <Container>
+        <Container onDoubleClick={joinGame}>
             <Title>{props.title}</Title>
             <Creator>{props.creator}</Creator>
             <PlayerCount>{props.numPlayers}</PlayerCount>

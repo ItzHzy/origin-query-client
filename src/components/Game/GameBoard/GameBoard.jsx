@@ -19,13 +19,13 @@ const SubContainer = styled.div`
 `
 
 const GameBoard = () => {
-    const players = useSelector(state => state.players)
+    const gameStatus = useSelector(state => state.gameStatus)
 
     return (
         <Container>
             <SubContainer>
                 <Hand playerID={players[0].playerID} />
-                {players.map((player) => {
+                {gameStatus.players.map((player) => {
                     return <BoardSide key={player.playerID} playerID={player.playerID} />
                 })}
             </SubContainer>

@@ -23,8 +23,9 @@ export const initializeServerHandlers = (socket) => {
             type: "NEW_GAME",
             game: data
         })
-        if (data.creator == "user") {
-            socket.emit("Join Game", data.gameID)
-        }
+    })
+
+    socket.on("Force Join Game", (data) => {
+        socket.emit("Join Game", data)
     })
 }

@@ -15,7 +15,7 @@ const Game = (props) => {
 
     return (
         <Container>
-            {gameStatus == "In Lobby" ? <Lobby /> : <GameBoard />}
+            {gameStatus.started ? <GameBoard /> : <Lobby />}
         </Container>
     );
 }
