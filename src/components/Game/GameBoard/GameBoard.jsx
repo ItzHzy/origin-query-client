@@ -18,18 +18,18 @@ const SubContainer = styled.div`
     width: 100%;
 `
 
-const GameBoard = () => {
-    const gameStatus = useSelector(state => state.gameStatus)
+const GameBoard = (props) => {
+    const players = useSelector(state => state.gameStates[props.gameID].relativePlayerList)
 
     return (
         <Container>
             <SubContainer>
-                <Hand playerID={players[0].playerID} />
-                {gameStatus.players.map((player) => {
-                    return <BoardSide key={player.playerID} playerID={player.playerID} />
+                <Hand numPlayers={players.length} playerID={players[0]} gameID={props.gameID} />
+                {players.map((player) => {
+                    return <BoardSide key={player + "-Board"} numPlayers={players.length} gameID={props.gameID} playerID={player} />
                 })}
             </SubContainer>
-            <Stack />
+            <Stack gameID={props.gameID} />
         </Container>
     );
 }

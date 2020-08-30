@@ -21,11 +21,11 @@ const Container = styled.div`
 `
 
 const Stack = (props) => {
-    const cards = useSelector(state => state.gameState)
+    const stack = useSelector(state => state.gameStates[props.gameID].stack)
 
     return (
         <Container>
-            {cards.filter(card => (card.zone == "Zone.STACK")).map(card => {
+            {stack.map(card => {
                 return <CardInstance src={card.src} key={card.instanceID} card={card} />
             })}
         </Container>

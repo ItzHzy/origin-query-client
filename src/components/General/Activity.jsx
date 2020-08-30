@@ -16,20 +16,19 @@ const Container = styled.div`
 
 const Activity = () => {
     const activity = useSelector((state) => state.currentActivity)
-    const currentGame = useSelector((state) => state.currentGame)
 
     const returnActivity = () => {
-        switch (activity) {
-            case 'builder':
+        switch (activity.activityName) {
+            case 'BUILDER':
                 return <Builder />;
-            case 'stats':
+            case 'STATISTICS':
                 return <Statistics />
-            case 'server':
+            case 'SERVER':
                 return <Server />
-            case 'settings':
+            case 'SETTINGS':
                 return <Settings />
-            case 'game':
-                return <Game currentGame={currentGame} />
+            case 'GAME':
+                return <Game gameID={activity.activityID} />
             default:
                 return <Builder />;
         }

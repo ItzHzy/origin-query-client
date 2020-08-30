@@ -22,11 +22,10 @@ const Container = styled.div`
 `
 
 const Hand = (props) => {
-    const cards = useSelector(state => state.gameState)
-    const players = useSelector(state => state.players)
+    const hand = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID).hand)
 
     return (
-        <Container numPlayers={players.length}>{cards.filter(card => ((card.controller == props.playerID) && (card.zone == "Zone.HAND"))).map(card => {
+        <Container numPlayers={props.numPlayers}>{hand.map(card => {
             return <CardInstance src={card.src} key={card.instanceID} card={card} />
         })}</Container>
     );

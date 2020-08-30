@@ -1,9 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit'
 
-export const changeActivity = createReducer("server", {
-    "builder": (state, action) => { return "builder" },
-    "stats": (state, action) => { return "stats" },
-    "server": (state, action) => { return "server" },
-    "settings": (state, action) => { return "settings" },
-    "game": (state, action) => { return "game" }
+export const changeActivity = createReducer({ activityName: "SERVER", activityID: null }, {
+    "CHANGE_ACTIVITY": (state, action) => {
+        state = action.payload.activityID
+            ? { activityName: action.payload.activityName, activityID: action.payload.activityID }
+            : { activityName: action.payload.activityName, activityID: null }
+        return state
+    }
 })

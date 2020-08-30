@@ -1,17 +1,13 @@
 import { store } from '../reducers/store'
 
 export const initializeGameHandlers = (socket) => {
-    socket.on("Joined Game", (data) => {
+    socket.on("You Joined Game", (data) => {
 
         store.dispatch({
-            type: 
-        })
-        store.dispatch({
-            type: "SET_INTIAL_GAME_STATE",
+            type: "JOIN_GAME",
             payload: {
-                title: data.title,
-                started: false,
-                numPlayers: data.players.length,
+                gameID: data.gameID,
+                playerID: data.playerID,
                 players: data.players
             }
         })
@@ -21,20 +17,36 @@ export const initializeGameHandlers = (socket) => {
         })
 
         store.dispatch({
-            type: "game"
+            type: "CHANGE_ACTIVITY",
+            payload: {
+                activityName: "GAME",
+                activityID: data.gameID
+            }
+        })
+
+    })
+
+    socket.on("Another Joined Game", (data) => {
+        store.dispatch({
+            type: "ADD_PLAYER",
+            payload: {
+                gameID: data.gameID,
+                playerID: data.playerID,
+                name: data.name
+            }
         })
     })
 
     socket.on("Ready", (data) => {
         store.dispatch({
-            type: "READY",
+            type: "PLAYER_READY",
             payload: data
         })
     })
 
     socket.on("Not Ready", (data) => {
         store.dispatch({
-            type: "NOT_READY",
+            type: "PLAYER_NOT_READY",
             payload: data
 
         })
@@ -42,7 +54,7 @@ export const initializeGameHandlers = (socket) => {
 
     socket.on("Start Game", (data) => {
         store.dispatch({
-            type: "SET_PLAYERS",
+            type: "START_GAME",
             payload: data
         })
     })
@@ -56,7 +68,7 @@ export const initializeGameHandlers = (socket) => {
                 var datum = { ...data, src: response.data[0].image_uris.png }
 
                 store.dispatch({
-                    type: "ADD_CARD",
+                    type: "NEW_OBJECT",
                     payload: datum
                 })
             });
@@ -64,29 +76,43 @@ export const initializeGameHandlers = (socket) => {
 
     socket.on("Remove Object", (data) => {
         store.dispatch({
-            type: "REMOVE_CARD",
-            payload: data
+            type: "REMOVE_OBJECT",
+            payload: {
+                gameID: data.gameID,
+                controller: data.controller,
+                instanceID: data.instanceID,
+                zone: data.zone
+            }
         })
     })
 
     socket.on("Take Action", (data) => {
         store.dispatch({
             type: "TAKING_ACTION",
-            payload: true
+            payload: {
+                gameID: data
+            }
         })
     })
 
     socket.on("Binary Question", (data) => {
         store.dispatch({
-            type: "SET_BINARY_QUESTION",
-            payload: data
+            type: "ASK_BINARY_QUESTION",
+            payload: {
+                gameID: data.gameID,
+                question: data.msg
+            }
         })
     })
 
     socket.on("Tap", (data) => {
         store.dispatch({
             type: "TAP_CARD",
-            payload: data
+            payload: {
+                gameID: data.gameID,
+                controller: data.controller,
+                instanceID: data.instanceID
+            }
         })
     })
 

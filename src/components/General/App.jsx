@@ -36,18 +36,20 @@ const Container = styled.div`
 `
 
 const App = () => {
-  const gameStatus = useSelector((state) => state.gameStatus)
+  const games = useSelector((state) => Object.keys(state.gameStates))
 
   return (
     <Container>
       <Tabs>
         <Logo />
         <LineBreak></LineBreak>
-        <Tab src={require("../../assets/images/builder.svg")} page='builder' />
-        <Tab src={require("../../assets/images/stats.svg")} page='stats' />
-        {(gameStatus != null) ? <Tab src={require("../../assets/images/game.svg")} page='game' /> : []}
-        <Tab src={require("../../assets/images/server.svg")} page='server' />
-        <Tab src={require("../../assets/images/settings.svg")} page='settings' />
+        <Tab src={require("../../assets/images/builder.svg")} activityName='BUILDER' activityID={false} />
+        <Tab src={require("../../assets/images/stats.svg")} activityName='STATISTICS' activityID={false} />
+        {games.map((game) => {
+          return <Tab key={game + "-Tab"} src={require("../../assets/images/game.svg")} activityName='GAME' activityID={game} />
+        })}
+        <Tab src={require("../../assets/images/server.svg")} activityName='SERVER' activityID={false} />
+        <Tab src={require("../../assets/images/settings.svg")} activityName='SETTINGS' activityID={false} />
       </Tabs>
       <Activity />
     </Container>

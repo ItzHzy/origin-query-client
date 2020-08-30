@@ -118,12 +118,17 @@ const PassBtn = styled.button`
 
 const Profile = (props) => {
     const dispatch = useDispatch()
-    const player = useSelector(state => state.players.find(player => player.playerID == props.playerID))
+    const player = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID))
+    const binaryQuestion = useSelector(state => state.gameStates[props.gameID].binaryQuestion)
+    const takingAction = useSelector(state => state.gameStates[props.gameID].takingAction)
 
     const answerQuestion = (answer) => {
         dispatch({
-            type: "SET_BINARY_QUESTION",
-            payload: null
+            type: "ASK_BINARY_QUESTION",
+            payload: {
+                gameID: props.gameID,
+                question: null
+            }
         })
 
         client.emit("Answer Question", answer)
@@ -132,7 +137,9 @@ const Profile = (props) => {
     const pass = () => {
         dispatch({
             type: "TAKING_ACTION",
-            payload: false
+            payload: {
+                gameID: props.gameID
+            }
         })
 
         client.emit("Pass")
@@ -144,7 +151,7 @@ const Profile = (props) => {
             <SubContainer>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/mana-pool.svg")} />
-                    <DatumCount>{player.totalMana}</DatumCount>
+                    <DatumCount>{player.manaPool}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/hand.svg")} />
@@ -152,7 +159,7 @@ const Profile = (props) => {
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/heart.svg")} />
-                    <DatumCount>{player.lifeTotal}</DatumCount>
+                    <DatumCount>{player.life}</DatumCount>
                 </Datum>
             </SubContainer>
             <SubContainer>
@@ -169,15 +176,15 @@ const Profile = (props) => {
                     <DatumCount>{player.deckCount}</DatumCount>
                 </Datum>
             </SubContainer>
-            {player.binaryQuestion ?
+            {binaryQuestion ?
                 <>
-                    <Question>{player.binaryQuestion}</Question>
+                    <Question>{binaryQuestion}</Question>
                     <SubContainer>
                         <Answer color="green" onClick={() => { answerQuestion(true) }}>Yes</Answer>
                         <Answer color="red" onClick={() => { answerQuestion(false) }}>No</Answer>
                     </SubContainer>
                 </> : []}
-            {player.takingAction && !(player.binaryQuestion) ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
+            {takingAction && !(binaryQuestion) ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
         </Container>
     );
 }

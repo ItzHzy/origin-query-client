@@ -3,7 +3,7 @@ import { editDeck, updateSearchResults } from './builderReducers'
 import { changeActivity } from './generalReducers'
 import { updateGameListings, showCreateGamePrompt } from './serverReducers'
 import { reducer as formReducer } from 'redux-form'
-import { updateGameBoard, playerUpdate, updateGameStatus, setPlayerStatus } from './gameReducers'
+import { updateGameState } from './gameReducers'
 
 export const reducersObject = {
     searchResults: updateSearchResults,
@@ -12,10 +12,7 @@ export const reducersObject = {
     gameListings: updateGameListings,
     isCreateGamePromptShowing: showCreateGamePrompt,
     form: formReducer,
-    gameStatus: updateGameStatus,
-    gameState: updateGameBoard,
-    myPlayerStatus: setPlayerStatus,
-    allPlayerStates: playerUpdate
+    gameStates: updateGameState,
 }
 
 export const store = createInjectStore(reducersObject)

@@ -1,63 +1,163 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { enableMapSet } from 'immer'
 
-// {
-//     title: data.title,
-//     started: false,
-//     numPlayers: data.players.length,
-//     players: data.players
+enableMapSet() // Non-serializable objects should not be in the store, but... ¯\_(ツ)_/¯
+// const gamesTemplate = {
+//     gameid1: {
+//         myPlayerID: playerID,
+//         relativePlayerList: [],
+//         takingAction: false,
+//         binaryQuestion: null,
+//         players: {
+//             playerid1: {
+//                 ready: false,
+//                 manaPool: 0,
+//                 field: {},
+//                 hand: {},
+//                 deck: {},
+//                 grave: {},
+//                 exile: {}
+//             },
+//             playerid2: {
+//                 ready: false,
+//                 manaPool: 0,
+//                 field: {},
+//                 hand: {},
+//                 deck: {},
+//                 grave: {},
+//                 exile: {}
+//             }
+//         }
+//     },
+//     gameid2: {
+//         playerID: playerID,
+//         takingAction: false,
+//         binaryQuestion: null,
+//         players: {
+//             playerid1: {
+//                 ready: false,
+//                 manaPool: 0,
+//                 life: 20,
+//                 name: "user",
+//                 field: {},
+//                 hand: {},
+//                 deck: {},
+//                 grave: {},
+//                 exile: {}
+//             },
+//             playerid2: {
+//                 ready: false,
+//                 manaPool: 0,
+//                 life: 20,
+//                 name: "user",
+//                 field: {},
+//                 hand: {},
+//                 deck: {},
+//                 grave: {},
+//                 exile: {}
+//             }
+//         }
+//     }
 // }
-export const updateGameStatus = createReducer(null, {
-    "SET_INTIAL_GAME_STATE": (state, action) => { return action.payload },
-    "READY": (state, action) => {
-        state.players[state.players.findIndex((player) => (player.playerID == action.payload))].ready = true
+
+export const updateGameState = createReducer({}, {
+    "JOIN_GAME": (state, action) => {
+
+        state[action.payload.gameID] = {
+            title: action.payload.title,
+            playerID: action.payload.playerID,
+            takingAction: false,
+            binaryQuestion: null,
+            inProgress: false,
+            stack: [],
+            players: new Map(),
+            relativePlayerList: []
+        }
+
+        action.payload.players.map((player) => {
+            state[action.payload.gameID].players.set(player.playerID, {
+                ready: player.isReady,
+                manaPool: 0,
+                life: 20,
+                name: player.name,
+                field: [],
+                hand: [],
+                handCount: 0,
+                deck: [],
+                deckCount: 0,
+                grave: [],
+                graveCount: 0,
+                exile: [],
+                exileCount: 0
+            })
+        })
+
     },
-    "NOT_READY": (state, action) => {
-        state.players[state.players.findIndex((player) => (player.playerID == action.payload))].ready = false
-    }
-})
-
-// {
-//     binaryQuestion: null,
-//     takingAction: false
-// }
-export const setPlayerStatus = createReducer(null, {
-    "SET_INITIAL_PLAYER_STATE": (state, action) => { state ? null : action.payload },
-    "SET_BINARY_QUESTION": (state, action) => {
-        state.binaryQuestion = action.payload
+    "ADD_PLAYER": (state, action) => {
+        state[action.payload.gameID].players.set(action.payload.playerID, {
+            ready: false,
+            manaPool: 0,
+            life: 20,
+            name: action.payload.name,
+            field: [],
+            hand: [],
+            handCount: 0,
+            deck: [],
+            deckCount: 0,
+            grave: [],
+            graveCount: 0,
+            exile: [],
+            exileCount: 0
+        })
+    },
+    "PLAYER_READY": (state, action) => {
+        state[action.payload.gameID].players.get(action.payload.playerID).isReady = true
+    },
+    "PLAYER_NOT_READY": (state, action) => {
+        state[action.payload.gameID].players.get(action.payload.playerID).isReady = false
+    },
+    "START_GAME": (state, action) => {
+        state[action.payload.gameID].inProgress = true
+        state[action.payload.gameID].relativePlayerList = action.payload.relativePlayerList
+    },
+    "ASK_BINARY_QUESTION": (state, action) => {
+        state[action.payload.gameID].binaryQuestion = action.payload.question
         return state
     },
     "TAKING_ACTION": (state, action) => {
-        state.takingAction = action.payload
+        state[action.payload.gameID].takingAction = true
         return state
-    }
-})
-
-// [{
-//     "playerID": p.playerID,
-//     "name": p.name,
-//     "lifeTotal": p.lifeTotal,
-//     "flavorText": p.flavorText,
-//     "profilePic": p.pfp,
-//     "totalMana": 0,
-//     "handCount": len(p.hand),
-//     "exileCount": len(p.exile),
-//     "graveCount": len(p.grave),
-//     "deckCount": len(p.deck)
-// }]
-
-export const playerUpdate = createReducer([], {
-    "SET_PLAYERS": (state, action) => { return action.payload },
-    "ADD_PLAYER": (state, action) => { return state.concat(action.payload) },
-    "REMOVE_PLAYER": (state, action) => { return state.remove(action.payload) }
-})
-
-export const updateGameBoard = createReducer([], {
-    "ADD_CARD": (state, action) => {
-        return state.concat(action.payload)
     },
-    "REMOVE_CARD": (state, action) => { return state.filter(card => (card.instanceID != action.payload)) },
-    "SET_STATE": (state, action) => { return action.payload },
+    "NEW_OBJECT": (state, action) => {
+        action.payload.zone == "Zone.HAND"
+            ? state[action.payload.gameID].players.get(action.payload.controller).hand.push(action.payload)
+            : action.payload.zone == "Zone.STACK"
+                ? state[action.payload.gameID].stack.push(action.payload)
+                : action.payload.zone == "Zone.FIELD"
+                    ? state[action.payload.gameID].players.get(action.payload.controller).field.push(action.payload)
+                    : action.payload.zone == "Zone.GRAVE"
+                        ? state[action.payload.gameID].players.get(action.payload.controller).grave.push(action.payload)
+                        : action.payload.zone == "Zone.EXILE"
+                            ? state[action.payload.gameID].players.get(action.payload.controller).exile.push(action.payload)
+                            : state[action.payload.gameID].players.get(action.payload.controller).deck.push(action.payload)
+    },
+    "REMOVE_OBJECT": (state, action) => {
+        switch (action.payload.zone) {
+            case "Zone.HAND":
+                state[action.payload.gameID].players.get(action.payload.controller).hand = state[action.payload.gameID].players.get(action.payload.controller).hand.filter(card => card.instanceID != action.payload.instanceID)
+            case "Zone.STACK":
+                state[action.payload.gameID].stack = state[action.payload.gameID].stack.filter(card => card.instanceID != action.payload.instanceID)
+            case "Zone.FIELD":
+                state[action.payload.gameID].players.get(action.payload.controller).field = state[action.payload.gameID].players.get(action.payload.controller).field.filter(card => card.instanceID != action.payload.instanceID)
+            case "Zone.GRAVE":
+                state[action.payload.gameID].players.get(action.payload.controller).grave = state[action.payload.gameID].players.get(action.payload.controller).grave.filter(card => card.instanceID != action.payload.instanceID)
+            case "Zone.EXILE":
+                state[action.payload.gameID].players.get(action.payload.controller).exile = state[action.payload.gameID].players.get(action.payload.controller).exile.filter(card => card.instanceID != action.payload.instanceID)
+            case "Zone.DECK":
+                state[action.payload.gameID].players.get(action.payload.controller).deck = state[action.payload.gameID].players.get(action.payload.controller).deck.filter(card => card.instanceID != action.payload.instanceID)
+        }
+    },
     "TAP_CARD": (state, action) => {
-        state[state.findIndex(card => (card.instanceID == action.payload))].tapped = true
+        state[action.payload.gameID].players.get(action.payload.controller).field = state[action.payload.gameID].players.get(action.payload.controller).field.map(card => card.instanceID == action.payload.instanceID ? { ...card, tapped: true } : card)
     }
 })

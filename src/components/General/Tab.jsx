@@ -32,9 +32,29 @@ const Container = styled.button`
 `
 const Tab = (props) => {
     const dispatch = useDispatch()
+
+    const changeActivity = () => {
+        props.activityID
+            ? dispatch({
+                type: "CHANGE_ACTIVITY",
+                payload: {
+                    activityName: props.activityName,
+                    activityID: props.activityID
+                }
+
+            })
+            : dispatch({
+                type: "CHANGE_ACTIVITY",
+                payload: {
+                    activityName: props.activityName,
+                    activityID: null
+                }
+            })
+    }
+
     return (
-        <Container onClick={() => { dispatch({ type: props.page }) }}>
-            <img src={props.src} width={'40px'} height={'40px'} alt={""} />
+        <Container onClick={changeActivity}>
+            <img src={props.src} width={'40px'} height={'40px'} />
         </Container>
     );
 }

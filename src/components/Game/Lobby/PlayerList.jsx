@@ -36,17 +36,17 @@ const Entry = styled.div`
     }
 `
 
-const PlayerList = () => {
-    const players = useSelector((state) => state.gameStatus.players)
+const PlayerList = (props) => {
+    const players = useSelector((state) => state.gameStates[props.gameID].players)
 
     return (
         <Container>
-            {players.map((player) => {
-                return <Entry key={player.playerID}>
+            {Array.from(players.keys()).map((playerID) => {
+                return <Entry key={playerID}>
 
-                    <p>{player.name}</p>
+                    <p>{players.get(playerID).name}</p>
 
-                    {player.ready
+                    {players.get(playerID).isReady
                         ? <p style={{ color: "green" }}>Ready</p>
                         : <p style={{ color: "red" }}>Not Ready</p>}
 

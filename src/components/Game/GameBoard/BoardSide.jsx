@@ -23,14 +23,12 @@ const SubContainer = styled.div`
 
 
 const BoardSide = (props) => {
-    const numPlayers = useSelector(state => state.gameStatus.numPlayers)
-
     return (
-        <Container numPlayers={numPlayers}>
-            <Profile playerID={props.playerID} />
+        <Container numPlayers={props.numPlayers}>
+            <Profile playerID={props.playerID} gameID={props.gameID} />
             <SubContainer>
-                <Field playerID={props.playerID} />
-                <Land playerID={props.playerID} />
+                <Field playerID={props.playerID} gameID={props.gameID} />
+                <Land playerID={props.playerID} gameID={props.gameID} />
             </SubContainer>
         </Container>
     );

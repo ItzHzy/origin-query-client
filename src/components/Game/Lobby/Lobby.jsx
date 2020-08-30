@@ -46,7 +46,7 @@ const Content = styled.div`
     justify-content: space-between;
 `
 
-const Lobby = () => {
+const Lobby = (props) => {
     const deck = useSelector(state => state.currentDeck)
     const dispatch = useDispatch()
 
@@ -78,7 +78,7 @@ const Lobby = () => {
             </Header>
             <Content>
                 <DeckList />
-                <PlayerList />
+                <PlayerList gameID={props.gameID} />
             </Content>
         </Container>
     );

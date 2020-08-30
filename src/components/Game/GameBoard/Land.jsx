@@ -20,11 +20,11 @@ const Container = styled.div`
 `
 
 const Land = (props) => {
-    const cards = useSelector(state => state.gameState)
+    const field = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID).field)
 
     return (
         <Container>
-            {cards.filter(card => ((card.controller == props.playerID) && (card.zone == "Zone.FIELD") && (card.types.includes("Type.LAND")))).map(card => {
+            {field.filter(card => card.types.includes("Type.LAND")).map(card => {
                 return <CardInstance src={card.src} key={card.instanceID} card={card} tapped={card.tapped} />
             })}
         </Container>

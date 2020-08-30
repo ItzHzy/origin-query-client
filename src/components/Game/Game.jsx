@@ -11,11 +11,11 @@ const Container = styled.div`
 `
 
 const Game = (props) => {
-    const gameStatus = useSelector((state) => state.gameStatus)
+    const gameState = useSelector((state) => state.gameStates[props.gameID])
 
     return (
         <Container>
-            {gameStatus.started ? <GameBoard /> : <Lobby />}
+            {gameState.inProgress ? <GameBoard gameID={props.gameID} /> : <Lobby gameID={props.gameID} />}
         </Container>
     );
 }
