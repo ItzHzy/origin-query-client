@@ -53,6 +53,7 @@ export const initializeGameHandlers = (socket) => {
     })
 
     socket.on("Start Game", (data) => {
+        console.log(data)
         store.dispatch({
             type: "START_GAME",
             payload: data
@@ -112,6 +113,24 @@ export const initializeGameHandlers = (socket) => {
                 gameID: data.gameID,
                 controller: data.controller,
                 instanceID: data.instanceID
+            }
+        })
+    })
+
+    socket.on("Choose Attacks", (data) => {
+        store.dispatch({
+            type: "CHOOSING_ATTACKS",
+            payload: {
+                gameID: data
+            }
+        })
+    })
+
+    socket.on("Choose Blocks", (data) => {
+        store.dispatch({
+            type: "CHOOSING_BLOCKS",
+            payload: {
+                gameID: data
             }
         })
     })

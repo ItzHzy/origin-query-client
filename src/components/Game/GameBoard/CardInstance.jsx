@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ContextMenuArea from 'react-electron-contextmenu'
+import { useDispatch } from 'react-redux'
 import { client } from '../../../api/socket'
 
 const Container = styled.img`
@@ -17,7 +18,22 @@ const Container = styled.img`
 `
 
 const CardInstance = (props) => {
+    const dispatch = useDispatch()
     const menuItems = [];
+
+    if (props.card.types.includes("Type.CREATURE") && props.card.zone == "Zone.FIELD") {
+        menuItems.push({
+            label: "Declare Attack On",
+            submenu: props.opponents.map(opponent => {
+                return {
+                    label: opponent.name,
+                    click: () => client.emit("Take Action", opponent.playerID)
+                }
+            })
+        })
+    }
+
+
     if (props.card.abilities.length != 0) {
         menuItems.push({
             label: "Activate Ability",

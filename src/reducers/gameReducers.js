@@ -1,64 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { enableMapSet } from 'immer'
 
-enableMapSet() // Non-serializable objects should not be in the store, but... ¯\_(ツ)_/¯
-// const gamesTemplate = {
-//     gameid1: {
-//         myPlayerID: playerID,
-//         relativePlayerList: [],
-//         takingAction: false,
-//         binaryQuestion: null,
-//         players: {
-//             playerid1: {
-//                 ready: false,
-//                 manaPool: 0,
-//                 field: {},
-//                 hand: {},
-//                 deck: {},
-//                 grave: {},
-//                 exile: {}
-//             },
-//             playerid2: {
-//                 ready: false,
-//                 manaPool: 0,
-//                 field: {},
-//                 hand: {},
-//                 deck: {},
-//                 grave: {},
-//                 exile: {}
-//             }
-//         }
-//     },
-//     gameid2: {
-//         playerID: playerID,
-//         takingAction: false,
-//         binaryQuestion: null,
-//         players: {
-//             playerid1: {
-//                 ready: false,
-//                 manaPool: 0,
-//                 life: 20,
-//                 name: "user",
-//                 field: {},
-//                 hand: {},
-//                 deck: {},
-//                 grave: {},
-//                 exile: {}
-//             },
-//             playerid2: {
-//                 ready: false,
-//                 manaPool: 0,
-//                 life: 20,
-//                 name: "user",
-//                 field: {},
-//                 hand: {},
-//                 deck: {},
-//                 grave: {},
-//                 exile: {}
-//             }
-//         }
-//     }
-// }
+enableMapSet() // Non-serializable objects should not be in the store, but... ¯\_(ツ)_/¯-
 
 export const updateGameState = createReducer({}, {
     "JOIN_GAME": (state, action) => {
@@ -67,11 +10,16 @@ export const updateGameState = createReducer({}, {
             title: action.payload.title,
             playerID: action.payload.playerID,
             takingAction: false,
+            declaringAttacks: false,
+            declaringBlocks: false,
             binaryQuestion: null,
             inProgress: false,
             stack: [],
             players: new Map(),
-            relativePlayerList: []
+            relativePlayerList: [],
+            opponentsList: [],
+            declaredAttacks: [],
+            declaredBlocks: []
         }
 
         action.payload.players.map((player) => {
@@ -119,6 +67,7 @@ export const updateGameState = createReducer({}, {
     "START_GAME": (state, action) => {
         state[action.payload.gameID].inProgress = true
         state[action.payload.gameID].relativePlayerList = action.payload.relativePlayerList
+        state[action.payload.gameID].opponentsList = action.payload.opponentsList
     },
     "ASK_BINARY_QUESTION": (state, action) => {
         state[action.payload.gameID].binaryQuestion = action.payload.question
@@ -159,5 +108,9 @@ export const updateGameState = createReducer({}, {
     },
     "TAP_CARD": (state, action) => {
         state[action.payload.gameID].players.get(action.payload.controller).field = state[action.payload.gameID].players.get(action.payload.controller).field.map(card => card.instanceID == action.payload.instanceID ? { ...card, tapped: true } : card)
-    }
+    },
+    "CHOOSING_ATTACKS": (state, action) => { state[action.payload.gameID].declaringAttacks = true },
+    "FINISH_DECLARING_ATTACKS": (state, action) => { state[action.payload.gameID].declaringAttacks = false },
+    "CHOOSING_BLOCKS": (state, action) => { state[action.payload.gameID].declaringBlocks = true },
+    "FINISH_DECLARING_BLOCKS": (state, action) => { state[action.payload.gameID].declaringBlocks = false }
 })

@@ -115,12 +115,50 @@ const PassBtn = styled.button`
     }
 `
 
+const DeclareAttacksBtn = styled.button`
+    display: flex;
+    height: fit-content;
+    width: fit-content;    
+    border: none;
+    outline: none;
+    background: none;
+    color: green;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: x-large;
+
+    &:hover{
+        cursor: pointer;
+    }
+`
+
+const DeclareBlockssBtn = styled.button`
+    display: flex;
+    height: fit-content;
+    width: fit-content;    
+    border: none;
+    outline: none;
+    background: none;
+    color: green;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: x-large;
+
+    &:hover{
+        cursor: pointer;
+    }
+`
 
 const Profile = (props) => {
     const dispatch = useDispatch()
     const player = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID))
     const binaryQuestion = useSelector(state => state.gameStates[props.gameID].binaryQuestion)
     const takingAction = useSelector(state => state.gameStates[props.gameID].takingAction)
+    const declaringAttacks = useSelector(state => state.gameStates[props.gameID].declaringAttacks)
+    const declaringBlocks = useSelector(state => state.gameStates[props.gameID].declaringBlocks)
+
 
     const answerQuestion = (answer) => {
         dispatch({
@@ -184,6 +222,8 @@ const Profile = (props) => {
                         <Answer color="red" onClick={() => { answerQuestion(false) }}>No</Answer>
                     </SubContainer>
                 </> : []}
+            {declaringAttacks ? <DeclareAttacksBtn onClick={declareAttacks}>Finish Declaring Attacks</DeclareAttacksBtn> : []}
+            {declaringBlocks ? <DeclareBlockssBtn onClick={declareBlocks}>Finish Declaring Blocks</DeclareBlockssBtn> : []}
             {takingAction && !(binaryQuestion) ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
         </Container>
     );
