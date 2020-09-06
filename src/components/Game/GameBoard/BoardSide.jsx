@@ -25,7 +25,7 @@ const SubContainer = styled.div`
 const BoardSide = (props) => {
     return (
         <Container numPlayers={props.numPlayers}>
-            <Profile playerID={props.playerID} gameID={props.gameID} />
+            <Profile playerID={props.playerID} gameID={props.gameID} isYours={props.isYours} />
             <SubContainer>
                 <Field playerID={props.playerID} gameID={props.gameID} />
                 <Land playerID={props.playerID} gameID={props.gameID} />

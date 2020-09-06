@@ -19,14 +19,17 @@ const SubContainer = styled.div`
 `
 
 const GameBoard = (props) => {
-    const players = useSelector(state => state.gameStates[props.gameID].relativePlayerList)
+    const myPlayerID = useSelector(state => state.gameStates[props.gameID].playerID)
+    const opponents = useSelector(state => state.gameStates[props.gameID].opponents)
+    const numPlayers = 1 + opponents.length
 
     return (
         <Container>
             <SubContainer>
-                <Hand numPlayers={players.length} playerID={players[0]} gameID={props.gameID} />
-                {players.map((player) => {
-                    return <BoardSide key={player + "-Board"} numPlayers={players.length} gameID={props.gameID} playerID={player} />
+                <Hand numPlayers={numPlayers} playerID={myPlayerID} gameID={props.gameID} />
+                <BoardSide key={myPlayerID + "-Board"} numPlayers={numPlayers} gameID={props.gameID} playerID={myPlayerID} isYours={true} />
+                {opponents.map((player) => {
+                    return <BoardSide key={player + "-Board"} numPlayers={numPlayers} gameID={props.gameID} playerID={player} isYours={false} />
                 })}
             </SubContainer>
             <Stack gameID={props.gameID} />

@@ -40,23 +40,30 @@ export const initializeGameHandlers = (socket) => {
     socket.on("Ready", (data) => {
         store.dispatch({
             type: "PLAYER_READY",
-            payload: data
+            payload: {
+                gameID: data.gameID,
+                playerID: data.playerID
+            }
         })
     })
 
     socket.on("Not Ready", (data) => {
         store.dispatch({
             type: "PLAYER_NOT_READY",
-            payload: data
-
+            payload: {
+                gameID: data.gameID,
+                playerID: data.playerID
+            }
         })
     })
 
     socket.on("Start Game", (data) => {
-        console.log(data)
         store.dispatch({
             type: "START_GAME",
-            payload: data
+            payload: {
+                gameID: data.gameID,
+                playerList: data.playerList
+            }
         })
     })
 
@@ -111,7 +118,6 @@ export const initializeGameHandlers = (socket) => {
             type: "TAP_CARD",
             payload: {
                 gameID: data.gameID,
-                controller: data.controller,
                 instanceID: data.instanceID
             }
         })

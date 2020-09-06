@@ -25,8 +25,8 @@ const Stack = (props) => {
 
     return (
         <Container>
-            {stack.map(card => {
-                return <CardInstance src={card.src} key={card.instanceID} card={card} />
+            {stack.map(instanceID => {
+                return <CardInstance key={instanceID} gameID={props.gameID} instanceID={instanceID} />
             })}
         </Container>
     );

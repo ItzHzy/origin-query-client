@@ -22,11 +22,11 @@ const Container = styled.div`
 `
 
 const Hand = (props) => {
-    const hand = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID).hand)
+    const hand = useSelector(state => state.gameStates[props.gameID].players[props.playerID]["Zone.HAND"])
 
     return (
-        <Container numPlayers={props.numPlayers}>{hand.map(card => {
-            return <CardInstance src={card.src} key={card.instanceID} card={card} />
+        <Container numPlayers={props.numPlayers}>{hand.map(instanceID => {
+            return <CardInstance key={instanceID} gameID={props.gameID} instanceID={instanceID} />
         })}</Container>
     );
 }

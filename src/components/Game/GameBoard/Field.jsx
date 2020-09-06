@@ -22,16 +22,18 @@ const Container = styled.div`
 `
 
 const Field = (props) => {
-    const declaredAttacks = useSelector(state => state.gameStates[props.gameID].declaredAttacks)
-    const declaredBlocks = useSelector(state => state.gameStates[props.gameID].declaredBlocks)
-    const opponents = useSelector(state => state.gameStates[props.gameID].opponentsList)
-    const field = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID).field)
+    const field = useSelector(state => state.gameStates[props.gameID].players[props.playerID]["Zone.FIELD"])
+
+    const isLand = (instanceID) => {
+        return field[instanceID]
+    }
 
     return (
         <Container>
-            {field.filter(card => !(card.types.includes("Type.LAND")))
-                .map(card => {
-                    return <CardInstance src={card.src} key={card.instanceID} card={card} tapped={card.tapped} opponents={opponents} declaredAsAttacker={card.instanceID in declarations} />
+            {Object.getOwnPropertyNames(field)
+                .filter(instanceID => !(isLand(instanceID)))
+                .map(instanceID => {
+                    return <CardInstance key={instanceID} gameID={props.gameID} instanceID={instanceID} />
                 })}
         </Container>
     );

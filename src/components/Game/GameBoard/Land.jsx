@@ -20,13 +20,19 @@ const Container = styled.div`
 `
 
 const Land = (props) => {
-    const field = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID).field)
+    const field = useSelector(state => state.gameStates[props.gameID].players[props.playerID]["Zone.FIELD"])
+
+    const isLand = (instanceID) => {
+        return field[instanceID]
+    }
 
     return (
         <Container>
-            {field.filter(card => card.types.includes("Type.LAND")).map(card => {
-                return <CardInstance src={card.src} key={card.instanceID} card={card} tapped={card.tapped} />
-            })}
+            {Object.getOwnPropertyNames(field)
+                .filter(instanceID => isLand(instanceID))
+                .map(instanceID => {
+                    return <CardInstance key={instanceID} gameID={props.gameID} instanceID={instanceID} />
+                })}
         </Container>
     );
 }

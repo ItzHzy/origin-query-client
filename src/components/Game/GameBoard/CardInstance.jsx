@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ContextMenuArea from 'react-electron-contextmenu'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { client } from '../../../api/socket'
 
 const Container = styled.img`
@@ -18,26 +18,29 @@ const Container = styled.img`
 `
 
 const CardInstance = (props) => {
+    const card = useSelector(state => state.gameStates[props.gameID].cards[props.instanceID])
+    const opponents = useSelector(state => state.gameStates[props.gameID].opponents)
+    const canAttack = useSelector(state => card.zone == "Zone.FIELD" && card.types.includes("Type.CREATURE") && card.controller == state.gameStates[props.gameID].playerID && state.gameStates[props.gameID].declaringAttacks)
     const dispatch = useDispatch()
     const menuItems = [];
 
-    if (props.card.types.includes("Type.CREATURE") && props.card.zone == "Zone.FIELD") {
+    if (canAttack) {
         menuItems.push({
             label: "Declare Attack On",
-            submenu: props.opponents.map(opponent => {
+            submenu: opponents.map(opponent => {
                 return {
-                    label: opponent.name,
-                    click: () => client.emit("Take Action", opponent.playerID)
+                    label: opponent,
+                    click: () => client.emit("Take Action", opponent)
                 }
             })
         })
     }
 
 
-    if (props.card.abilities.length != 0) {
+    if (card.abilities.length != 0) {
         menuItems.push({
             label: "Activate Ability",
-            submenu: props.card.abilities.map(ability => {
+            submenu: card.abilities.map(ability => {
                 return {
                     label: ability[1],
                     click: () => client.emit("Take Action", ability[0])
@@ -46,16 +49,16 @@ const CardInstance = (props) => {
         })
     }
 
-    if (props.card.zone == "Zone.HAND") {
+    if (card.zone == "Zone.HAND") {
         menuItems.push({
             label: "Play Card",
-            click: () => client.emit("Take Action", props.card.instanceID)
+            click: () => client.emit("Take Action", card.instanceID)
         })
     }
 
     return (
         <ContextMenuArea menuItems={menuItems}>
-            <Container src={props.src} tapped={props.tapped} />
+            <Container src={card.src} tapped={card.tapped} />
         </ContextMenuArea>
     );
 }

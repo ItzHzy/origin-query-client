@@ -41,12 +41,12 @@ const PlayerList = (props) => {
 
     return (
         <Container>
-            {Array.from(players.keys()).map((playerID) => {
+            {Object.getOwnPropertyNames(players).map((playerID) => {
                 return <Entry key={playerID}>
 
-                    <p>{players.get(playerID).name}</p>
+                    <p>{players[playerID].name}</p>
 
-                    {players.get(playerID).isReady
+                    {players[playerID].isReady
                         ? <p style={{ color: "green" }}>Ready</p>
                         : <p style={{ color: "red" }}>Not Ready</p>}
 

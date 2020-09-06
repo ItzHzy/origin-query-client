@@ -153,12 +153,11 @@ const DeclareBlockssBtn = styled.button`
 
 const Profile = (props) => {
     const dispatch = useDispatch()
-    const player = useSelector(state => state.gameStates[props.gameID].players.get(props.playerID))
-    const binaryQuestion = useSelector(state => state.gameStates[props.gameID].binaryQuestion)
-    const takingAction = useSelector(state => state.gameStates[props.gameID].takingAction)
-    const declaringAttacks = useSelector(state => state.gameStates[props.gameID].declaringAttacks)
-    const declaringBlocks = useSelector(state => state.gameStates[props.gameID].declaringBlocks)
-
+    const player = useSelector(state => state.gameStates[props.gameID].players[props.playerID])
+    const binaryQuestion = useSelector(state => props.isYours ? state.gameStates[props.gameID].binaryQuestion : null)
+    const takingAction = useSelector(state => props.isYours ? state.gameStates[props.gameID].takingAction : null)
+    const declaringAttacks = useSelector(state => props.isYours ? state.gameStates[props.gameID].declaringAttacks : null)
+    const declaringBlocks = useSelector(state => props.isYours ? state.gameStates[props.gameID].declaringBlocks : null)
 
     const answerQuestion = (answer) => {
         dispatch({
@@ -214,7 +213,7 @@ const Profile = (props) => {
                     <DatumCount>{player.deckCount}</DatumCount>
                 </Datum>
             </SubContainer>
-            {binaryQuestion ?
+            {props.isYours && binaryQuestion ?
                 <>
                     <Question>{binaryQuestion}</Question>
                     <SubContainer>
@@ -222,9 +221,9 @@ const Profile = (props) => {
                         <Answer color="red" onClick={() => { answerQuestion(false) }}>No</Answer>
                     </SubContainer>
                 </> : []}
-            {declaringAttacks ? <DeclareAttacksBtn onClick={declareAttacks}>Finish Declaring Attacks</DeclareAttacksBtn> : []}
-            {declaringBlocks ? <DeclareBlockssBtn onClick={declareBlocks}>Finish Declaring Blocks</DeclareBlockssBtn> : []}
-            {takingAction && !(binaryQuestion) ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
+            {props.isYours && declaringAttacks ? <DeclareAttacksBtn onClick={declareAttacks}>Finish Declaring Attacks</DeclareAttacksBtn> : []}
+            {props.isYours && declaringBlocks ? <DeclareBlockssBtn onClick={declareBlocks}>Finish Declaring Blocks</DeclareBlockssBtn> : []}
+            {props.isYours && takingAction && !(binaryQuestion) ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
         </Container>
     );
 }
