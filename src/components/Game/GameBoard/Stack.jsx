@@ -12,7 +12,6 @@ const Container = styled.div`
     justify-content: flex-start;
 
     &>:nth-child(1n){
-        display: flex;
         height: 300px;
         margin-bottom: -250px;
         margin-left: auto;

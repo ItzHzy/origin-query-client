@@ -154,33 +154,50 @@ const DeclareBlockssBtn = styled.button`
 const Profile = (props) => {
     const dispatch = useDispatch()
     const player = useSelector(state => state.gameStates[props.gameID].players[props.playerID])
-    const binaryQuestion = useSelector(state => props.isYours ? state.gameStates[props.gameID].binaryQuestion : null)
-    const takingAction = useSelector(state => props.isYours ? state.gameStates[props.gameID].takingAction : null)
-    const declaringAttacks = useSelector(state => props.isYours ? state.gameStates[props.gameID].declaringAttacks : null)
-    const declaringBlocks = useSelector(state => props.isYours ? state.gameStates[props.gameID].declaringBlocks : null)
+    const status = useSelector(state => state.gameStates[props.gameID].status)
+    const hasPriority = useSelector(state => props.isYours ? state.gameStates[props.gameID].hasPriority : null)
+    const question = useSelector(state => props.isYours ? state.gameStates[props.gameID].question : null)
+    const answer = useSelector(state => props.isYours ? state.gameStates[props.gameID].answer : null)
 
     const answerQuestion = (answer) => {
+        client.emit("Answer Question", answer)
+
         dispatch({
-            type: "ASK_BINARY_QUESTION",
+            type: "CHANGE_PLAYER_STATUS",
             payload: {
                 gameID: props.gameID,
-                question: null
+                status: null
             }
         })
 
-        client.emit("Answer Question", answer)
     }
 
     const pass = () => {
-        dispatch({
-            type: "TAKING_ACTION",
-            payload: {
-                gameID: props.gameID
-            }
-        })
-
         client.emit("Pass")
     }
+
+    const declareAttacks = () => {
+        client.emit("Declare Attacks", answer)
+        dispatch({
+            type: "CHANGE_PLAYER_STATUS",
+            payload: {
+                gameID: props.gameID,
+                status: null
+            }
+        })
+    }
+
+    const declareBlocks = () => {
+        client.emit("Declare Blocks", answer)
+        dispatch({
+            type: "CHANGE_PLAYER_STATUS",
+            payload: {
+                gameID: props.gameID,
+                status: null
+            }
+        })
+    }
+
     return (
         <Container>
             <ProfilePic src={require("../../../assets/images/default-pfp.svg")} />
@@ -213,17 +230,17 @@ const Profile = (props) => {
                     <DatumCount>{player.deckCount}</DatumCount>
                 </Datum>
             </SubContainer>
-            {props.isYours && binaryQuestion ?
+            {props.isYours && status == "ANSWERING_BINARY_QUESTION" ?
                 <>
-                    <Question>{binaryQuestion}</Question>
+                    <Question>{question}</Question>
                     <SubContainer>
                         <Answer color="green" onClick={() => { answerQuestion(true) }}>Yes</Answer>
                         <Answer color="red" onClick={() => { answerQuestion(false) }}>No</Answer>
                     </SubContainer>
                 </> : []}
-            {props.isYours && declaringAttacks ? <DeclareAttacksBtn onClick={declareAttacks}>Finish Declaring Attacks</DeclareAttacksBtn> : []}
-            {props.isYours && declaringBlocks ? <DeclareBlockssBtn onClick={declareBlocks}>Finish Declaring Blocks</DeclareBlockssBtn> : []}
-            {props.isYours && takingAction && !(binaryQuestion) ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
+            {props.isYours && status == "CHOOSING_ATTACKS" ? <DeclareAttacksBtn onClick={declareAttacks}>Finish Declaring Attacks</DeclareAttacksBtn> : []}
+            {props.isYours && status == "CHOOSING_BLOCKS" ? <DeclareBlockssBtn onClick={declareBlocks}>Finish Declaring Blocks</DeclareBlockssBtn> : []}
+            {props.isYours && hasPriority && !status ? <PassBtn onClick={pass}>Pass</PassBtn> : []}
         </Container>
     );
 }

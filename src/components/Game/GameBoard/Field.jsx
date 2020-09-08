@@ -9,16 +9,7 @@ const Container = styled.div`
     height: 50%;
     width: 100%;
     border-bottom: solid 2px black;
-    justify-content: space-evenly;
-
-    &>:nth-child(1n){
-        display: flex;
-        height: 90%;
-        width: fit-content;
-        margin-top: auto;
-        margin-bottom: auto;
-    }
-    
+    justify-content: space-evenly;    
 `
 
 const Field = (props) => {

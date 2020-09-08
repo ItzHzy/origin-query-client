@@ -11,11 +11,6 @@ const Container = styled.div`
     justify-content: space-evenly;
 
     &>:nth-child(1n){
-        display: flex;
-        height: 90%;
-        width: fit-content;
-        margin-top: auto;
-        margin-bottom: auto;
         margin-left: -250px;
         margin-right: -250px;
     }

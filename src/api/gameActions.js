@@ -1,14 +1,18 @@
 import { store } from '../reducers/store'
 
 export const initializeGameHandlers = (socket) => {
-    socket.on("You Joined Game", (data) => {
+    socket.on("Player Joined Game", (data) => {
 
         store.dispatch({
-            type: "JOIN_GAME",
+            type: "PLAYER_JOINED_GAME",
             payload: {
                 gameID: data.gameID,
+                title: data.title,
+                isJoiningPlayer: data.isJoiningPlayer,
                 playerID: data.playerID,
-                players: data.players
+                name: data.name,
+                playerInfo: data.playerInfo,
+                orderedPlayerList: data.orderedPlayerList
             }
         })
 
@@ -24,17 +28,6 @@ export const initializeGameHandlers = (socket) => {
             }
         })
 
-    })
-
-    socket.on("Another Joined Game", (data) => {
-        store.dispatch({
-            type: "ADD_PLAYER",
-            payload: {
-                gameID: data.gameID,
-                playerID: data.playerID,
-                name: data.name
-            }
-        })
     })
 
     socket.on("Ready", (data) => {
@@ -57,12 +50,11 @@ export const initializeGameHandlers = (socket) => {
         })
     })
 
-    socket.on("Start Game", (data) => {
+    socket.on("Start Game", (gameID) => {
         store.dispatch({
             type: "START_GAME",
             payload: {
-                gameID: data.gameID,
-                playerList: data.playerList
+                gameID: gameID,
             }
         })
     })
@@ -94,21 +86,60 @@ export const initializeGameHandlers = (socket) => {
         })
     })
 
-    socket.on("Take Action", (data) => {
+    socket.on("Give Priority", (data) => {
         store.dispatch({
-            type: "TAKING_ACTION",
+            type: "GAIN_PRIORITY",
             payload: {
-                gameID: data
+                gameID: data.gameID
+            }
+        })
+    })
+
+    socket.on("Lose Priority", (data) => {
+        store.dispatch({
+            type: "LOSE_PRIORITY",
+            payload: {
+                gameID: data.gameID
             }
         })
     })
 
     socket.on("Binary Question", (data) => {
         store.dispatch({
-            type: "ASK_BINARY_QUESTION",
+            type: "SET_QUESTION",
             payload: {
                 gameID: data.gameID,
                 question: data.msg
+            }
+        })
+
+        store.dispatch({
+            type: "CHANGE_PLAYER_STATUS",
+            payload: {
+                gameID: data.gameID,
+                status: "ANSWERING_BINARY_QUESTION"
+            }
+        })
+    })
+
+    socket.on("Choose Attacks", (data) => {
+        store.dispatch({
+            type: "CHANGE_PLAYER_STATUS",
+            payload: {
+                gameID: data.gameID,
+                legalTargets: data.legalTargets,
+                status: "CHOOSING_ATTACKS"
+            }
+        })
+    })
+
+    socket.on("Choose Blocks", (data) => {
+        store.dispatch({
+            type: "CHANGE_PLAYER_STATUS",
+            payload: {
+                gameID: data.gameID,
+                legalTargets: data.legalTargets,
+                status: "CHOOSING_BLOCKS"
             }
         })
     })
@@ -119,24 +150,6 @@ export const initializeGameHandlers = (socket) => {
             payload: {
                 gameID: data.gameID,
                 instanceID: data.instanceID
-            }
-        })
-    })
-
-    socket.on("Choose Attacks", (data) => {
-        store.dispatch({
-            type: "CHOOSING_ATTACKS",
-            payload: {
-                gameID: data
-            }
-        })
-    })
-
-    socket.on("Choose Blocks", (data) => {
-        store.dispatch({
-            type: "CHOOSING_BLOCKS",
-            payload: {
-                gameID: data
             }
         })
     })

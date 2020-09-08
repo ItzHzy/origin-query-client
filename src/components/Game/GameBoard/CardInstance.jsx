@@ -1,13 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import ContextMenuArea from 'react-electron-contextmenu'
 import { useDispatch, useSelector } from 'react-redux'
+const { remote } = require('electron')
+const { Menu, MenuItem } = remote
 import { client } from '../../../api/socket'
 
 const Container = styled.img`
     display: flex;
-    width: auto;
-    height: 100%;
+    height: 90%;
+    margin-top: auto;
+    margin-bottom: auto;
     transform: ${props => props.tapped ? "rotate(90deg)" : "none"};
 
     &:hover{
@@ -18,48 +20,96 @@ const Container = styled.img`
 `
 
 const CardInstance = (props) => {
-    const card = useSelector(state => state.gameStates[props.gameID].cards[props.instanceID])
-    const opponents = useSelector(state => state.gameStates[props.gameID].opponents)
-    const canAttack = useSelector(state => card.zone == "Zone.FIELD" && card.types.includes("Type.CREATURE") && card.controller == state.gameStates[props.gameID].playerID && state.gameStates[props.gameID].declaringAttacks)
     const dispatch = useDispatch()
-    const menuItems = [];
+    const card = useSelector(state => state.gameStates[props.gameID].cards[props.instanceID])
+    const legalTargets = useSelector(state => state.gameStates[props.gameID].legalTargets)
+    // const menuItems = [];
 
-    if (canAttack) {
-        menuItems.push({
-            label: "Declare Attack On",
-            submenu: opponents.map(opponent => {
-                return {
-                    label: opponent,
-                    click: () => client.emit("Take Action", opponent)
-                }
-            })
-        })
-    }
+    // if (card.zone == "Zone.FIELD" && card.types.includes("Type.CREATURE")) {
+    //     menuItems.push({
+    //         label: "Declare Attack On",
+    //         submenu: legalTargets.map(opponent => {
+    //             return {
+    //                 label: opponent.name,
+    //                 click: () => dispatch({
+    //                     type: "DECLARE_ATTACK",
+    //                     payload: {
+    //                         gameID: props.gameID,
+    //                         attacker: card.instanceID,
+    //                         defender: opponent.playerID
+    //                     }
+    //                 })
+    //             }
+    //         })
+    //     })
+    // }
 
+    // if (card.abilities.length != 0) {
+    //     menuItems.push({
+    //         label: "Activate Ability",
+    //         submenu: card.abilities.map(ability => {
+    //             return {
+    //                 label: ability[1],
+    //                 click: () => client.emit("Take Action", ability[0])
+    //             }
+    //         })
+    //     })
+    // }
 
-    if (card.abilities.length != 0) {
-        menuItems.push({
-            label: "Activate Ability",
-            submenu: card.abilities.map(ability => {
-                return {
-                    label: ability[1],
-                    click: () => client.emit("Take Action", ability[0])
-                }
-            })
-        })
-    }
+    // if (card.zone == "Zone.HAND") {
+    //     menuItems.push({
+    //         label: "Play Card",
+    //         click: () => client.emit("Take Action", card.instanceID)
+    //     })
+    // }
 
-    if (card.zone == "Zone.HAND") {
-        menuItems.push({
-            label: "Play Card",
-            click: () => client.emit("Take Action", card.instanceID)
-        })
+    const createContextMenu = (e) => {
+        e.preventDefault()
+        const menu = new Menu()
+
+        if (card.zone == "Zone.FIELD" && card.types.includes("Type.CREATURE")) {
+            menu.append(new MenuItem({
+                label: "Declare Attack On",
+                submenu: legalTargets.map(opponent => {
+                    return {
+                        label: opponent.name,
+                        click: () => dispatch({
+                            type: "DECLARE_ATTACK",
+                            payload: {
+                                gameID: props.gameID,
+                                attacker: card.instanceID,
+                                defender: opponent.playerID
+                            }
+                        })
+                    }
+                })
+            }))
+        }
+
+        if (card.abilities.length != 0) {
+            menu.append(new MenuItem({
+                label: "Activate Ability",
+                submenu: card.abilities.map(ability => {
+                    return {
+                        label: ability[1],
+                        click: () => client.emit("Take Action", ability[0])
+                    }
+                })
+            }))
+        }
+
+        if (card.zone == "Zone.HAND") {
+            menu.append(new MenuItem({
+                label: "Play Card",
+                click: () => client.emit("Take Action", card.instanceID)
+            }))
+        }
+
+        menu.popup({ window: remote.getCurrentWindow() })
     }
 
     return (
-        <ContextMenuArea menuItems={menuItems}>
-            <Container src={card.src} tapped={card.tapped} />
-        </ContextMenuArea>
+        <Container src={card.src} tapped={card.tapped} onContextMenu={createContextMenu} />
     );
 }
 

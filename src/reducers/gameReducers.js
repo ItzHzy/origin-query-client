@@ -4,33 +4,33 @@ import { enableMapSet } from 'immer'
 enableMapSet() // Non-serializable objects should not be in the store, but... ¯\_(ツ)_/¯-
 
 export const updateGameState = createReducer({}, {
-    "JOIN_GAME": (state, action) => {
+    "PLAYER_JOINED_GAME": (state, action) => {
 
-        state[action.payload.gameID] = {
-            // general game information
-            title: action.payload.title,
-            activePlayer: null,
-            phase: null,
-            stack: [],
-            players: {},
-            cards: {}, // stores all card data
-            inProgress: false,
-            combatMatrix: null, // currently unused 
+        action.payload.isJoiningPlayer
+            ? state[action.payload.gameID] = {
+                // general game information
+                title: action.payload.title,
+                activePlayer: null,
+                phase: null,
+                stack: [],
+                players: {},
+                cards: {}, // stores all card data
+                inProgress: false,
+                combatMatrix: null, // currently unused 
 
-            //Client specific
-            playerID: action.payload.playerID, // personal player ID
-            opponents: [], // list of opponent player IDs
-            takingAction: false,
-            declaringAttacks: false,
-            declaringBlocks: false,
-            binaryQuestion: null,
-            chosenAttacks: [],
-            chosenBlocks: []
-        }
+                //Client specific
+                playerID: action.payload.playerID, // personal player ID
+                opponents: [], // list of opponent player IDs and names
+                status: null,
+                hasPriority: false,
+                question: null,
+                answer: null,
+                legalTargets: []
+            } : null
 
-        action.payload.players.map((player) => {
+        action.payload.playerInfo.map((player) => {
             state[action.payload.gameID].players[player.playerID] = {
-                ready: false,
+                ready: action.payload.isReady,
                 manaPool: 0,
                 life: 20,
                 name: action.payload.name,
@@ -46,23 +46,9 @@ export const updateGameState = createReducer({}, {
             }
         })
 
-    },
-    "ADD_PLAYER": (state, action) => {
-        state[action.payload.gameID].players[action.payload.playerID] = {
-            ready: false,
-            manaPool: 0,
-            life: 20,
-            name: action.payload.name,
-            "Zone.FIELD": {},
-            "Zone.HAND": [],
-            "Zone.DECK": [],
-            "Zone.GRAVE": [],
-            "Zone.EXILE": [],
-            handCount: 0,
-            deckCount: 0,
-            graveCount: 0,
-            exileCount: 0
-        }
+        action.payload.orderedPlayerList.length > 1
+            ? state[action.payload.gameID].opponents = action.payload.orderedPlayerList.slice(1) : null
+
     },
     "PLAYER_READY": (state, action) => {
         state[action.payload.gameID].players[action.payload.playerID].isReady = true
@@ -72,19 +58,42 @@ export const updateGameState = createReducer({}, {
     },
     "START_GAME": (state, action) => {
         state[action.payload.gameID].inProgress = true
-        state[action.payload.gameID].playerID = action.payload.playerList[0]
+    },
+    "SET_QUESTION": (state, action) => {
+        state[action.payload.gameID].question = action.payload.question
+    },
+    "CHANGE_PLAYER_STATUS": (state, action) => {
+        state[action.payload.gameID].question = null
 
-        action.payload.playerList.length > 1
-            ? state[action.payload.gameID].opponents = action.payload.playerList.slice(1) : null
+        action.payload.status == "CHOOSING_ATTACKS" || action.payload.status == "CHOOSING_BLOCKS"
+            ? state[action.payload.gameID].answer = {}
+            : state[action.payload.gameID].answer = null
+
+        action.payload.status == "CHOOSING_ATTACKS" || action.payload.status == "CHOOSING_BLOCKS"
+            ? state[action.payload.gameID].legalTargets = action.payload.legalTargets
+            : null
+
+        state[action.payload.gameID].status = action.payload.status
     },
-    "ASK_BINARY_QUESTION": (state, action) => {
-        state[action.payload.gameID].binaryQuestion = action.payload.question
+    "GAIN_PRIORITY": (state, action) => {
+        state[action.payload.gameID].hasPriority = true
     },
-    "TAKING_ACTION": (state, action) => {
-        state[action.payload.gameID].takingAction = true
+    "LOSE_PRIORITY": (state, action) => {
+        state[action.payload.gameID].hasPriority = false
+    },
+    "DECLARE_ATTACK": (state, action) => {
+        state[action.payload.gameID].answer[action.payload.attacker] = action.payload.defender
+    },
+    "DECLARE_BLOCK": (state, action) => {
+        action.payload.blocker in state[action.payload.gameID].declaredBlocks
+            ? state[action.payload.gameID].answer[action.payload.blocker].push(action.payload.attacker)
+            : state[action.payload.gameID].answer[action.payload.blocker] = [action.payload.attacker]
     },
     "NEW_OBJECT": (state, action) => {
-        state[action.payload.gameID].cards[action.payload.instanceID] = action.payload
+        state[action.payload.gameID].cards[action.payload.instanceID] = {
+            ...action.payload,
+            canAttack: false
+        }
 
         action.payload.zone == "Zone.STACK"
             ? state[action.payload.gameID].stack.push(action.payload.instanceID)
@@ -102,13 +111,9 @@ export const updateGameState = createReducer({}, {
 
         delete state[action.payload.gameID].cards[action.payload.instanceID]
     },
-    "CHOOSING_ATTACKS": (state, action) => { state[action.payload.gameID].declaringAttacks = true },
-    "FINISH_DECLARING_ATTACKS": (state, action) => { state[action.payload.gameID].declaringAttacks = false },
-    "CHOOSING_BLOCKS": (state, action) => { state[action.payload.gameID].declaringBlocks = true },
-    "FINISH_DECLARING_BLOCKS": (state, action) => { state[action.payload.gameID].declaringBlocks = false },
 
     // Card updates
     "TAP_CARD": (state, action) => {
         state[action.payload.gameID].cards[action.payload.instanceID].tapped = true
-    },
+    }
 })

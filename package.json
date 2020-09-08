@@ -34,7 +34,6 @@
     "nedb": "^1.8.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-electron-contextmenu": "^1.0.0",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
     "redux-form": "^8.3.6",

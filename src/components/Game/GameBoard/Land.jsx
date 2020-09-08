@@ -9,14 +9,6 @@ const Container = styled.div`
     height: 50%;
     width: 100%;
     justify-content: space-evenly;
-
-    &>:nth-child(1n){
-        display: flex;
-        height: 90%;
-        width: fit-content;
-        margin-top: auto;
-        margin-bottom: auto;
-    }
 `
 
 const Land = (props) => {
