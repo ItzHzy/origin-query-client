@@ -32,17 +32,19 @@ export const updateGameState = createReducer({}, {
             state[action.payload.gameID].players[player.playerID] = {
                 ready: action.payload.isReady,
                 manaPool: 0,
-                life: 20,
+                life: -1,
                 name: action.payload.name,
                 "Zone.FIELD": {},
                 "Zone.HAND": [],
                 "Zone.DECK": [],
                 "Zone.GRAVE": [],
                 "Zone.EXILE": [],
-                handCount: 0,
-                deckCount: 0,
-                graveCount: 0,
-                exileCount: 0
+                zoneSizes: {
+                    "Zone.HAND": 0,
+                    "Zone.DECK": 0,
+                    "Zone.GRAVE": 0,
+                    "Zone.EXILE": 0,
+                }
             }
         })
 
@@ -75,6 +77,9 @@ export const updateGameState = createReducer({}, {
 
         state[action.payload.gameID].status = action.payload.status
     },
+    "LIFE_TOTAL_UPDATE": (state, action) => {
+        state[action.payload.gameID].players[action.payload.playerID].life = action.payload.life
+    },
     "GAIN_PRIORITY": (state, action) => {
         state[action.payload.gameID].hasPriority = true
     },
@@ -88,6 +93,9 @@ export const updateGameState = createReducer({}, {
         action.payload.blocker in state[action.payload.gameID].declaredBlocks
             ? state[action.payload.gameID].answer[action.payload.blocker].push(action.payload.attacker)
             : state[action.payload.gameID].answer[action.payload.blocker] = [action.payload.attacker]
+    },
+    "UPDATE_ZONE_SIZE": (state, action) => {
+        state[action.payload.gameID].players[action.payload.playerID].zoneSizes[action.payload.zoneType] = action.payload.num
     },
     "NEW_OBJECT": (state, action) => {
         state[action.payload.gameID].cards[action.payload.instanceID] = {

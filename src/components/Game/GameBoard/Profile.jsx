@@ -153,7 +153,10 @@ const DeclareBlockssBtn = styled.button`
 
 const Profile = (props) => {
     const dispatch = useDispatch()
-    const player = useSelector(state => state.gameStates[props.gameID].players[props.playerID])
+    const name = useSelector(state => state.gameStates[props.gameID].players[props.playerID].name)
+    const life = useSelector(state => state.gameStates[props.gameID].players[props.playerID].life)
+    const manaPool = useSelector(state => state.gameStates[props.gameID].players[props.playerID].manaPool)
+    const zoneSizes = useSelector(state => state.gameStates[props.gameID].players[props.playerID].zoneSizes)
     const status = useSelector(state => state.gameStates[props.gameID].status)
     const hasPriority = useSelector(state => props.isYours ? state.gameStates[props.gameID].hasPriority : null)
     const question = useSelector(state => props.isYours ? state.gameStates[props.gameID].question : null)
@@ -201,33 +204,33 @@ const Profile = (props) => {
     return (
         <Container>
             <ProfilePic src={require("../../../assets/images/default-pfp.svg")} />
-            <Name>{player.name}</Name>
+            <Name>{name}</Name>
             <SubContainer>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/mana-pool.svg")} />
-                    <DatumCount>{player.manaPool}</DatumCount>
+                    <DatumCount>{manaPool}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/hand.svg")} />
-                    <DatumCount>{player.handCount}</DatumCount>
+                    <DatumCount>{zoneSizes["Zone.HAND"]}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/heart.svg")} />
-                    <DatumCount>{player.life}</DatumCount>
+                    <DatumCount>{life}</DatumCount>
                 </Datum>
             </SubContainer>
             <SubContainer>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/exile.svg")} />
-                    <DatumCount>{player.exileCount}</DatumCount>
+                    <DatumCount>{zoneSizes["Zone.EXILE"]}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/grave.svg")} />
-                    <DatumCount>{player.graveCount}</DatumCount>
+                    <DatumCount>{zoneSizes["Zone.GRAVE"]}</DatumCount>
                 </Datum>
                 <Datum>
                     <DatumIcon src={require("../../../assets/images/deck.svg")} />
-                    <DatumCount>{player.deckCount}</DatumCount>
+                    <DatumCount>{zoneSizes["Zone.DECK"]}</DatumCount>
                 </Datum>
             </SubContainer>
             {props.isYours && status == "ANSWERING_BINARY_QUESTION" ?

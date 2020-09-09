@@ -23,45 +23,7 @@ const CardInstance = (props) => {
     const dispatch = useDispatch()
     const card = useSelector(state => state.gameStates[props.gameID].cards[props.instanceID])
     const legalTargets = useSelector(state => state.gameStates[props.gameID].legalTargets)
-    // const menuItems = [];
 
-    // if (card.zone == "Zone.FIELD" && card.types.includes("Type.CREATURE")) {
-    //     menuItems.push({
-    //         label: "Declare Attack On",
-    //         submenu: legalTargets.map(opponent => {
-    //             return {
-    //                 label: opponent.name,
-    //                 click: () => dispatch({
-    //                     type: "DECLARE_ATTACK",
-    //                     payload: {
-    //                         gameID: props.gameID,
-    //                         attacker: card.instanceID,
-    //                         defender: opponent.playerID
-    //                     }
-    //                 })
-    //             }
-    //         })
-    //     })
-    // }
-
-    // if (card.abilities.length != 0) {
-    //     menuItems.push({
-    //         label: "Activate Ability",
-    //         submenu: card.abilities.map(ability => {
-    //             return {
-    //                 label: ability[1],
-    //                 click: () => client.emit("Take Action", ability[0])
-    //             }
-    //         })
-    //     })
-    // }
-
-    // if (card.zone == "Zone.HAND") {
-    //     menuItems.push({
-    //         label: "Play Card",
-    //         click: () => client.emit("Take Action", card.instanceID)
-    //     })
-    // }
 
     const createContextMenu = (e) => {
         e.preventDefault()

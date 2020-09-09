@@ -86,6 +86,29 @@ export const initializeGameHandlers = (socket) => {
         })
     })
 
+    socket.on("Zone Size Update", (data) => {
+        store.dispatch({
+            type: "UPDATE_ZONE_SIZE",
+            payload: {
+                gameID: data.gameID,
+                playerID: data.playerID,
+                zoneType: data.zoneType,
+                num: data.num
+            }
+        })
+    })
+
+    socket.on("Life Total Update", (data) => {
+        store.dispatch({
+            type: "LIFE_TOTAL_UPDATE",
+            payload: {
+                gameID: data.gameID,
+                playerID: data.playerID,
+                life: data.life
+            }
+        })
+    })
+
     socket.on("Give Priority", (data) => {
         store.dispatch({
             type: "GAIN_PRIORITY",
