@@ -25,13 +25,19 @@ export const updateGameState = createReducer({}, {
                 hasPriority: false,
                 question: null,
                 answer: null,
-                legalTargets: []
+                legalTargets: [],
+                manaPool: {
+                    "Color.WHITE": 0,
+                    "Color.BLUE": 0,
+                    "Color.BLACK": 0,
+                    "Color.RED": 0,
+                    "Color.GREEN": 0,
+                }
             } : null
 
         action.payload.playerInfo.map((player) => {
             state[action.payload.gameID].players[player.playerID] = {
                 ready: action.payload.isReady,
-                manaPool: 0,
                 life: -1,
                 name: action.payload.name,
                 "Zone.FIELD": {},
@@ -66,25 +72,49 @@ export const updateGameState = createReducer({}, {
     },
     "CHANGE_PLAYER_STATUS": (state, action) => {
         state[action.payload.gameID].question = null
+        state[action.payload.gameID].answer = null
 
         action.payload.status == "CHOOSING_ATTACKS" || action.payload.status == "CHOOSING_BLOCKS"
-            ? state[action.payload.gameID].answer = {}
-            : state[action.payload.gameID].answer = null
+            ? state[action.payload.gameID].answer = {} : null
 
         action.payload.status == "CHOOSING_ATTACKS" || action.payload.status == "CHOOSING_BLOCKS"
-            ? state[action.payload.gameID].legalTargets = action.payload.legalTargets
-            : null
+            ? state[action.payload.gameID].legalTargets = action.payload.legalTargets : null
+
+        action.payload.status == "PAYING_MANA"
+            ? state[action.payload.gameID].legalTargets = action.payload.legalTargets : null
+
+        action.payload.status == "PAYING_MANA"
+            ? state[action.payload.gameID].answer = {
+                "Color.WHITE": 0,
+                "Color.BLUE": 0,
+                "Color.BLACK": 0,
+                "Color.RED": 0,
+                "Color.GREEN": 0,
+                "Color.COLORLESS": 0
+            } : null
 
         state[action.payload.gameID].status = action.payload.status
     },
     "LIFE_TOTAL_UPDATE": (state, action) => {
         state[action.payload.gameID].players[action.payload.playerID].life = action.payload.life
     },
+    "MANA_UPDATE": (state, action) => {
+        state[action.payload.gameID].manaPool[action.payload.color] = action.payload.amount
+    },
     "GAIN_PRIORITY": (state, action) => {
         state[action.payload.gameID].hasPriority = true
     },
     "LOSE_PRIORITY": (state, action) => {
         state[action.payload.gameID].hasPriority = false
+    },
+    "ADD_ONE_MANA_TO_PAYMENT": (state, action) => {
+        state[action.payload.gameID].manaPool[action.payload.color] - state[action.payload.gameID].answer[action.payload.color] != 0
+            ? state[action.payload.gameID].answer[action.payload.color] += 1 : null
+
+    },
+    "SUBTRACT_ONE_MANA_FROM_PAYMENT": (state, action) => {
+        state[action.payload.gameID].answer[action.payload.color] > 0
+            ? state[action.payload.gameID].answer[action.payload.color] -= 1 : null
     },
     "DECLARE_ATTACK": (state, action) => {
         state[action.payload.gameID].answer[action.payload.attacker] = action.payload.defender

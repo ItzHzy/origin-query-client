@@ -10,6 +10,10 @@ const Container = styled.div`
     width: 100%;
     border-bottom: solid 2px black;
     justify-content: space-evenly;    
+
+    &>:nth-child(1n){
+        height: 90%;
+    }
 `
 
 const Field = (props) => {

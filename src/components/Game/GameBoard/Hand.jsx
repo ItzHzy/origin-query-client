@@ -9,6 +9,7 @@ const Container = styled.div`
     height: ${(props) => { return (100 / (1 + (2 * props.numPlayers))) }}%;
     width: 100%;
     justify-content: space-evenly;
+    border-top: 2px solid black;
 
     &>:nth-child(1n){
         margin-left: -250px;

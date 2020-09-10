@@ -167,6 +167,29 @@ export const initializeGameHandlers = (socket) => {
         })
     })
 
+    socket.on("Mana Update", (data) => {
+        store.dispatch({
+            type: "MANA_UPDATE",
+            payload: {
+                gameID: data.gameID,
+                color: data.color,
+                amount: data.amount
+            }
+
+        })
+    })
+
+    socket.on("Pay Mana", (data) => {
+        store.dispatch({
+            type: "CHANGE_PLAYER_STATUS",
+            payload: {
+                gameID: data.gameID,
+                status: data.status,
+                legalTargets: data.cost,
+            }
+        })
+    })
+
     socket.on("Tap", (data) => {
         store.dispatch({
             type: "TAP_CARD",
@@ -176,5 +199,6 @@ export const initializeGameHandlers = (socket) => {
             }
         })
     })
+
 
 }
