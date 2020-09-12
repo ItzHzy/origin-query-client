@@ -1,0 +1,25 @@
+ @font-face {
+    font-family: 'Roboto';
+    src:  url('../fonts/Roboto/Roboto-Black.ttf') format('truetype');
+}
+
+html, body {
+    display:flex;
+    height:100%;
+    width:100%;
+    margin:0;
+    overflow:hidden;
+    background-color:#31343a;
+    font-family: Roboto;
+}
+
+#root {
+    display:flex;
+    width:100%;
+    height:100%;
+    user-select:none;
+    -webkit-user-drag:none;
+    -khtml-user-drag:none;
+    -moz-user-drag:none;
+    -o-user-drag:none;
+}

@@ -1,5 +1,17 @@
+# dependencies
 /node_modules
-/decks
-config.json
-dominaria.json
-Client.code-workspace
+
+# production
+/dist
+
+*.json
+
+/src/resources/datastore
+
+# misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
