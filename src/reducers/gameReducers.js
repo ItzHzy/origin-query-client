@@ -32,7 +32,8 @@ export const updateGameState = createReducer({}, {
                     "Color.BLACK": 0,
                     "Color.RED": 0,
                     "Color.GREEN": 0,
-                }
+                },
+                zoneBeingShown: null
             } : null
 
         action.payload.playerInfo.map((player) => {
@@ -101,6 +102,11 @@ export const updateGameState = createReducer({}, {
     "MANA_UPDATE": (state, action) => {
         state[action.payload.gameID].manaPool[action.payload.color] = action.payload.amount
     },
+    "SHOW_ZONE": (state, action) => {
+        JSON.stringify(state[action.payload.gameID].zoneBeingShown) != JSON.stringify(state[action.payload.gameID].players[action.payload.playerID][action.payload.zone]).toString()
+            ? state[action.payload.gameID].zoneBeingShown = state[action.payload.gameID].players[action.payload.playerID][action.payload.zone]
+            : state[action.payload.gameID].zoneBeingShown = null
+    },
     "GAIN_PRIORITY": (state, action) => {
         state[action.payload.gameID].hasPriority = true
     },
@@ -110,7 +116,6 @@ export const updateGameState = createReducer({}, {
     "ADD_ONE_MANA_TO_PAYMENT": (state, action) => {
         state[action.payload.gameID].manaPool[action.payload.color] - state[action.payload.gameID].answer[action.payload.color] != 0
             ? state[action.payload.gameID].answer[action.payload.color] += 1 : null
-
     },
     "SUBTRACT_ONE_MANA_FROM_PAYMENT": (state, action) => {
         state[action.payload.gameID].answer[action.payload.color] > 0

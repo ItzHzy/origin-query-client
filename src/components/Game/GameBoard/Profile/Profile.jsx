@@ -60,6 +60,10 @@ const DatumIcon = styled.img`
     width: 40px;
     margin-top: auto;
     margin-bottom: auto;
+
+    &:hover {
+        cursor: pointer;
+    }
 `
 
 const DatumCount = styled.p`
@@ -162,6 +166,17 @@ const Profile = (props) => {
     const question = useSelector(state => props.isYours ? state.gameStates[props.gameID].question : null)
     const answer = useSelector(state => props.isYours ? state.gameStates[props.gameID].answer : null)
 
+    const showZone = (zoneToShow) => {
+        dispatch({
+            type: "SHOW_ZONE",
+            payload: {
+                gameID: props.gameID,
+                playerID: props.playerID,
+                zone: zoneToShow
+            }
+        })
+    }
+
     const answerQuestion = (answer) => {
         client.emit("Answer Question", answer)
 
@@ -201,12 +216,14 @@ const Profile = (props) => {
         })
     }
 
+
+
     return (
         <Container>
             <ProfilePic src={require("../../../../assets/images/default-pfp.svg")} />
             <Name>{name}</Name>
             <SubContainer>
-                <Datum>
+                <Datum onClick={() => { showZone("Zone.HAND") }}>
                     <DatumIcon src={require("../../../../assets/images/hand.svg")} />
                     <DatumCount>{zoneSizes["Zone.HAND"]}</DatumCount>
                 </Datum>
@@ -216,15 +233,15 @@ const Profile = (props) => {
                 </Datum>
             </SubContainer>
             <SubContainer>
-                <Datum>
+                <Datum onClick={() => { showZone("Zone.EXILE") }}>
                     <DatumIcon src={require("../../../../assets/images/exile.svg")} />
                     <DatumCount>{zoneSizes["Zone.EXILE"]}</DatumCount>
                 </Datum>
-                <Datum>
+                <Datum onClick={() => { showZone("Zone.GRAVE") }}>
                     <DatumIcon src={require("../../../../assets/images/grave.svg")} />
                     <DatumCount>{zoneSizes["Zone.GRAVE"]}</DatumCount>
                 </Datum>
-                <Datum>
+                <Datum onClick={() => { showZone("Zone.DECK") }}>
                     <DatumIcon src={require("../../../../assets/images/deck.svg")} />
                     <DatumCount>{zoneSizes["Zone.DECK"]}</DatumCount>
                 </Datum>

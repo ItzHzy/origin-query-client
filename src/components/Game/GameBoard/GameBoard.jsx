@@ -5,6 +5,7 @@ import Hand from './Hand'
 import BoardSide from './BoardSide'
 import Stack from './Stack'
 import Profile from './Profile/Profile'
+import CardInstance from './CardInstance'
 
 const Container = styled.div`
     display: flex;
@@ -30,16 +31,27 @@ const PublicZone = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 350px;
-    border-left: solid 2px black;
-    justify-content: flex-start;
+    width: fit-content;
+    border-right: solid 2px black;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
 
     &>:nth-child(1n){
-        height: 300px;
+        height: auto;
+        width: 200px;
+        margin-top: -250px;
         margin-bottom: -250px;
         margin-left: auto;
         margin-right: auto;
-        margin-top: 0px;
+    }
+
+    &>:first-child {
+        margin-top: 10px;
+    }
+
+    &>:last-child {
+        margin-bottom: 10px;
     }
 `
 
@@ -53,21 +65,22 @@ const Fields = styled.div`
 const GameBoard = (props) => {
     const myPlayerID = useSelector(state => state.gameStates[props.gameID].playerID)
     const opponents = useSelector(state => state.gameStates[props.gameID].opponents)
-    const ZoneBeingShown = useSelector(state => state.gameStates[props.gameID].zoneBeingShown)
+    const zoneBeingShown = useSelector(state => state.gameStates[props.gameID].zoneBeingShown)
     const numPlayers = 1 + opponents.length
 
     return (
         <Container>
             <Section numPlayers={numPlayers}>
-                <PublicZone>{stack.map(instanceID => {
-                    return <CardInstance key={instanceID} gameID={props.gameID} instanceID={instanceID} />
-                })}</PublicZone>
                 <Profiles>
                     <Profile playerID={myPlayerID} gameID={props.gameID} isYours={true} />
                     {opponents.map((player) =>
                         <Profile playerID={player.playerID} gameID={props.gameID} isYours={false} />
                     )}
                 </Profiles>
+                {zoneBeingShown
+                    ? <PublicZone>{zoneBeingShown.map(instanceID => {
+                        return <CardInstance key={instanceID} gameID={props.gameID} instanceID={instanceID} />
+                    })}</PublicZone> : null}
                 <Fields>
                     <BoardSide key={myPlayerID + "-Board"} numPlayers={numPlayers} gameID={props.gameID} playerID={myPlayerID} />
                     {opponents.map((player) => {
