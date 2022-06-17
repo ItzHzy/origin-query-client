@@ -27,7 +27,7 @@
     "babel-loader": "^8.1.0",
     "babel-preset-es2015": "^6.24.1",
     "css-loader": "^4.2.1",
-    "electron": "^9.2.0",
+    "electron": "^15.5.5",
     "electron-reload": "^1.5.0",
     "electron-store": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
